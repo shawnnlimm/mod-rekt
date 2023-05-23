@@ -23,7 +23,7 @@ export default function Signup() {
       setError("");
       setLoading(true);
       await signup(emailRef.current.value, passwordRef.current.value);
-      history.push("/");
+      history("/");
     } catch (err) {
       console.log(err);
       setError("Failed to create an account");
