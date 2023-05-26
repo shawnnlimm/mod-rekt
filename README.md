@@ -8,33 +8,44 @@ Apollo
 
 During ModReg, many students have modules that they would like to enroll in with their friends and would like to attend the same tutorial slot together. However, there are often clashes with our own preferred timetable, making it difficult and troublesome to find a possible schedule to achieve both aims. It will be convenient to have a tool for students to view their friends’ timetables, making it more convenient for them to plan their own timetables.
 
-### `npm test`
+## Aim
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+We hope to make it convenient for students to find a suitable timetable such that they can attend the same tutorial slots with their friends. Our system aims to help to allow students to view their friends’ timetables and suggest changes, also allowing them to view students that are bidding for the same tutorial slot.
 
-### `npm run build`
+## User Stories
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. As a student, I want to be able to take the same tutorial slots as my friends despite us having different preferences in tutorial timings
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+2. As a student, I want to be able to see my friends’ tabletables to make it convenient for me to plan mine and attend the same tutorials with them
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+3. As a student, I want to be able to plan my timetable in advance so that I can manage my time better
 
-### `npm run eject`
+4. As a student I want to at least have a friend to accompany me during tutorial slots if none of my friend circle are attending the same slot as me.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+5. As a student, I want to see the number of people and people who are interested in bidding for the same tutorial slot as me so that I can gauge my chances of getting the tutorial slot.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Features
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+1. A Website that allows users to plan their schedules using a timetable. It also allows users to view their friends’ timetables. 
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+2. An Authentication system that allows users to log into their own accounts.
 
-## Learn More
+## Development Plan
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Week 1: Complete video and poster
+Week 2: Learn the basics of web development, relational databases
+Week 3: Forming of Class/UML diagram for relational database
+Week 4: (29/05 Milestone 1): User authentication system 
+Week 5: Continue setting up user authentication system
+Week 6: Customising of profile / user functions (eg adding/unadding other users)
+Week 7: Customising of profile / user functions (eg adding/unadding other users)
+Week 8 (26/06 Milestone 2): Allow users to input tutorial timeslot preferences and storing (function)
+Week 9: Allow users to view other users’ timetable/preferences
+Week 10: Setting up of ‘suggestions’ function into user functions, allow users to suggest time slots to others
+Week 11: Allow users to view all users who indicated preference in a particular tutorial time slot
+Week 12 (24/7 Milestone 3): Finishing product, final touches
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Libraries and Frameworks
+1. React (Frontend)
+2. Firebase (Authentication and Backend)
+3. Tailwind CSS (Styling)
