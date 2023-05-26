@@ -1,18 +1,12 @@
-# Getting Started with Create React App
+# ModRekt
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Proposed Level of Achivement
 
-## Available Scripts
+Apollo
 
-In the project directory, you can run:
+## Motivation
 
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+During ModReg, many students have modules that they would like to enroll in with their friends and would like to attend the same tutorial slot together. However, there are often clashes with our own preferred timetable, making it difficult and troublesome to find a possible schedule to achieve both aims. It will be convenient to have a tool for students to view their friends’ timetables, making it more convenient for them to plan their own timetables.
 
 ### `npm test`
 
