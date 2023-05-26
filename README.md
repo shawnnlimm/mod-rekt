@@ -48,9 +48,7 @@ Week 7: Customising of profile / user functions (eg adding/unadding other users)
 
 Week 8 (26/06 Milestone 2): Allow users to input tutorial timeslot preferences and storing (function)
 
-Week 9: Allow users to view other users’ timetable/preferences
-
-Week 10: Setting up of ‘suggestions’ function into user functions, allow users to suggest time slots to others
+Week 9/10: Allow users to view other users’ timetable/preferences
 
 Week 11: Allow users to view all users who indicated preference in a particular tutorial time slot
 
