@@ -33,16 +33,27 @@ We hope to make it convenient for students to find a suitable timetable such tha
 ## Development Plan
 
 Week 1: Complete video and poster
+
 Week 2: Learn the basics of web development, relational databases
+
 Week 3: Forming of Class/UML diagram for relational database
+
 Week 4: (29/05 Milestone 1): User authentication system 
+
 Week 5: Continue setting up user authentication system
+
 Week 6: Customising of profile / user functions (eg adding/unadding other users)
+
 Week 7: Customising of profile / user functions (eg adding/unadding other users)
+
 Week 8 (26/06 Milestone 2): Allow users to input tutorial timeslot preferences and storing (function)
+
 Week 9: Allow users to view other users’ timetable/preferences
+
 Week 10: Setting up of ‘suggestions’ function into user functions, allow users to suggest time slots to others
+
 Week 11: Allow users to view all users who indicated preference in a particular tutorial time slot
+
 Week 12 (24/7 Milestone 3): Finishing product, final touches
 
 ## Libraries and Frameworks
