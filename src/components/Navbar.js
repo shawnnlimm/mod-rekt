@@ -31,14 +31,11 @@ const Navbar = ({ toggle }) => {
         <Link className="p-4" to="/">
           Home
         </Link>
-        <Link className="p-4" to="/menu">
-          Menu
+        <Link className="p-4" to="/login">
+          Login
         </Link>
         <Link className="p-4" to="/about">
           About
-        </Link>
-        <Link className="p-4" to="/contact">
-          Contact
         </Link>
       </div>
     </nav>
