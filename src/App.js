@@ -8,6 +8,8 @@ import Login from "./pages/Login";
 import About from "./pages/About";
 import Home from "./pages/Home";
 import Dropdown from "./components/Dropdown";
+import PrivateRoute from "./components/PrivateRoute";
+import Timetable from "./pages/Timetable";
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
@@ -32,14 +34,17 @@ function App() {
 
   return (
     <>
-      <Navbar toggle={toggle} />
       <Dropdown isOpen={isOpen} toggle={toggle} />
       <AuthProvider>
+        <Navbar toggle={toggle} />
         <Routes>
           <Route exact path="/" element={<Home />}></Route>
           <Route path="/signup" element={<Signup />}></Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path="/about" element={<About />}></Route>
+          <Route element={<PrivateRoute />}>
+            <Route path="/timetable" element={<Timetable />}></Route>
+          </Route>
         </Routes>
       </AuthProvider>
     </>

@@ -1,7 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const Navbar = ({ toggle }) => {
+  const { logout } = useAuth();
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <nav
       className="flex justify-between items-center h-16 bg-white text-black relative shadow-sm font-mono"
@@ -36,6 +45,9 @@ const Navbar = ({ toggle }) => {
         </Link>
         <Link className="p-4" to="/about">
           About
+        </Link>
+        <Link className="p-4" to="/">
+          <button onClick={handleLogout}>Logout</button>
         </Link>
       </div>
     </nav>
