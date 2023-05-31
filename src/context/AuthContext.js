@@ -18,12 +18,28 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   function signup(email, password) {
-    return createUserWithEmailAndPassword(auth, email, password);
+    return createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        set(ref(db, 'users/' + user.uid), {
+          email: email,
+          password: password
+        })
+          .then(() => {
+            alert('user created succcessfully');
+          });
+      });
   }
 
   function login(email, password) {
-    setIsLoggedIn(true);
-    return signInWithEmailAndPassword(auth, email, password);
+    var lgDate = new Date();
+    return signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        update(ref(db, 'users/' + user.uid), {
+          last_login: lgDate
+        });
+      });
   }
 
   function logout() {
