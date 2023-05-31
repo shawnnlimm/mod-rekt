@@ -5,6 +5,8 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
+import { db } from "../config/firebase";
+import { set, ref, update } from "firebase/database";
 
 const AuthContext = React.createContext();
 
