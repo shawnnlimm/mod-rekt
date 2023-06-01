@@ -5,8 +5,9 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
-import { db } from "../config/firebase";
+import { fireStoreDB, realTimeDB } from "../config/firebase";
 import { set, ref, update } from "firebase/database";
+import { collection, getDoc, addDoc, doc } from "firebase/firestore";
 
 const AuthContext = React.createContext();
 
@@ -18,30 +19,38 @@ export function AuthProvider({ children }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState("");
   const [loading, setLoading] = useState(true);
+  const usersCollectionRef = collection(fireStoreDB, "users");
 
-  function signup(email, password) {
-    return createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        set(ref(db, 'users/' + user.uid), {
-          email: email,
-          password: password
-        })
-          .then(() => {
-            alert('user created succcessfully');
-          });
+  async function signup(username, email, password) {
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    const user = userCredential.user;
+    set(ref(realTimeDB, "users/" + user.uid), {
+      email: email,
+      password: password,
+    })
+      .then(() => {
+        addDoc(usersCollectionRef, { username: username, friends: {} });
+      })
+      .then(() => {
+        alert("user created succcessfully");
       });
   }
 
-  function login(email, password) {
+  async function login(email, password) {
     var lgDate = new Date();
-    return signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        update(ref(db, 'users/' + user.uid), {
-          last_login: lgDate
-        });
-      });
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    const user = userCredential.user;
+    update(ref(realTimeDB, "users/" + user.uid), {
+      last_login: lgDate,
+    });
   }
 
   function logout() {
@@ -52,16 +61,18 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user !== null) {
+        const userDoc = doc(fireStoreDB, "users", user.uid);
+        const docSnapshot = getDoc(userDoc);
+        setCurrentUser(docSnapshot.username);
         setIsLoggedIn(true);
       } else {
         setIsLoggedIn(false);
       }
-      setCurrentUser(user);
       setLoading(false);
     });
 
-    return unsubscribe;
-  }, [setCurrentUser]);
+    return unsubscribe();
+  }, [currentUser]);
 
   const value = {
     currentUser,

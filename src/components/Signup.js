@@ -3,6 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function Signup() {
+  const usernameRef = useRef();
   const emailRef = useRef();
   const passwordRef = useRef();
   const passwordConfirmRef = useRef();
@@ -21,7 +22,11 @@ export default function Signup() {
     try {
       setError("");
       setLoading(true);
-      await signup(emailRef.current.value, passwordRef.current.value);
+      await signup(
+        usernameRef.current.value,
+        emailRef.current.value,
+        passwordRef.current.value
+      );
       history("/");
     } catch (err) {
       console.log(err);
@@ -37,6 +42,18 @@ export default function Signup() {
         <h2 className="text-center mb-4 text-2xl">Sign Up</h2>
         {error && <div className="text-red-500">{error}</div>}
         <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label htmlFor="email" className="block mb-2">
+              Username
+            </label>
+            <input
+              id="username"
+              type="username"
+              className="border border-gray-300 rounded px-3 py-2 w-full"
+              ref={usernameRef}
+              required
+            />
+          </div>
           <div className="mb-4">
             <label htmlFor="email" className="block mb-2">
               Email
