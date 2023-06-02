@@ -2,11 +2,10 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { fireStoreDB } from "../config/firebase";
 import { collection, getDocs } from "firebase/firestore";
-import { useAuth } from "../context/AuthContext";
+import WelcomeMessage from "../components/WelcomeMessage";
 
 const Timetable = () => {
   const [users, setUsers] = useState([]);
-  const { currentUser } = useAuth();
 
   useEffect(() => {
     const getUsers = async () => {
@@ -21,9 +20,7 @@ const Timetable = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">
-        Welcome back, {currentUser?.username}
-      </h1>
+      <WelcomeMessage />
       <div className="bg-gray-100 p-4 rounded-md">
         {users.map((user) => (
           <div key={user.id} className="mb-4">

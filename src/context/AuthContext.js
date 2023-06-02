@@ -7,7 +7,7 @@ import {
 } from "firebase/auth";
 import { fireStoreDB, realTimeDB } from "../config/firebase";
 import { set, ref, update } from "firebase/database";
-import { collection, getDoc, addDoc, doc } from "firebase/firestore";
+import { collection, getDoc, doc, setDoc } from "firebase/firestore";
 
 const AuthContext = React.createContext();
 
@@ -19,7 +19,6 @@ export function AuthProvider({ children }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState("");
   const [loading, setLoading] = useState(true);
-  const usersCollectionRef = collection(fireStoreDB, "users");
 
   async function signup(username, email, password) {
     const userCredential = await createUserWithEmailAndPassword(
@@ -33,7 +32,9 @@ export function AuthProvider({ children }) {
       password: password,
     })
       .then(() => {
-        addDoc(usersCollectionRef, { username: username, friends: {} });
+        const userDocRef = doc(collection(fireStoreDB, "users"), user.uid);
+        const userData = { username: username, friends: {} };
+        setDoc(userDocRef, userData);
       })
       .then(() => {
         alert("user created succcessfully");
@@ -59,11 +60,12 @@ export function AuthProvider({ children }) {
   }
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user !== null) {
         const userDoc = doc(fireStoreDB, "users", user.uid);
-        const docSnapshot = getDoc(userDoc);
-        setCurrentUser(docSnapshot.username);
+        const docSnapshot = await getDoc(userDoc);
+        const userData = docSnapshot.data();
+        setCurrentUser(userData.username);
         setIsLoggedIn(true);
       } else {
         setIsLoggedIn(false);
@@ -71,7 +73,7 @@ export function AuthProvider({ children }) {
       setLoading(false);
     });
 
-    return unsubscribe();
+    return unsubscribe;
   }, [currentUser]);
 
   const value = {
