@@ -30,10 +30,11 @@ export function AuthProvider({ children }) {
     set(ref(realTimeDB, "users/" + user.uid), {
       email: email,
       password: password,
+      timtable: { Monday: null, Tuesday: null, Wednesday: null, Thursday: null, Friday: null },
     })
       .then(() => {
         const userDocRef = doc(collection(fireStoreDB, "users"), user.uid);
-        const userData = { username: username, friends: {} };
+        const userData = { username: username, friends: {}, timtable: { Monday: null, Tuesday: null, Wednesday: null, Thursday: null, Friday: null} };
         setDoc(userDocRef, userData);
       })
       .then(() => {
