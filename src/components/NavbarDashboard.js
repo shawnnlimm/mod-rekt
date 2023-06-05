@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-const Navbar = ({ toggle }) => {
+const NavbarHome = ({ toggle }) => {
   const { logout } = useAuth();
   const handleLogout = async () => {
     try {
@@ -40,9 +40,6 @@ const Navbar = ({ toggle }) => {
         <Link className="p-4" to="/">
           Home
         </Link>
-        <Link className="p-4" to="/login">
-          Login
-        </Link>
         <Link className="p-4" to="/about">
           About
         </Link>
@@ -54,4 +51,4 @@ const Navbar = ({ toggle }) => {
   );
 };
 
-export default Navbar;
+export default NavbarHome;

@@ -1,6 +1,6 @@
 import "./App.css";
 import React, { useState, useEffect } from "react";
-import Navbar from "./components/Navbar";
+import NavbarHome from "./components/NavbarHome";
 import Signup from "./components/Signup";
 import { AuthProvider } from "./context/AuthContext";
 import { Routes, Route } from "react-router-dom";
@@ -9,10 +9,12 @@ import About from "./pages/About";
 import Home from "./pages/Home";
 import Dropdown from "./components/Dropdown";
 import PrivateRoute from "./components/PrivateRoute";
-import Timetable from "./pages/Timetable";
+import Profile from "./pages/Profile";
+import NavbarDashboard from "./components/NavbarDashboard";
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const toggle = () => {
     setIsOpen(!isOpen);
@@ -35,15 +37,19 @@ function App() {
   return (
     <>
       <Dropdown isOpen={isOpen} toggle={toggle} />
-      <AuthProvider>
-        <Navbar toggle={toggle} />
+      <AuthProvider isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}>
+        {isLoggedIn ? (
+          <NavbarDashboard toggle={toggle} />
+        ) : (
+          <NavbarHome toggle={toggle} />
+        )}
         <Routes>
           <Route exact path="/" element={<Home />}></Route>
           <Route path="/signup" element={<Signup />}></Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path="/about" element={<About />}></Route>
           <Route element={<PrivateRoute />}>
-            <Route path="/timetable" element={<Timetable />}></Route>
+            <Route path="/profile" element={<Profile />}></Route>
           </Route>
         </Routes>
       </AuthProvider>

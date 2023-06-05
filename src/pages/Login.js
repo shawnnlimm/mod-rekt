@@ -17,7 +17,7 @@ export default function Login() {
       setError("");
       setLoading(true);
       await login(emailRef.current.value, passwordRef.current.value);
-      history("/timetable");
+      history("/profile");
     } catch {
       setError("Failed to sign in");
     }
