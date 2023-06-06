@@ -15,8 +15,7 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
-export function AuthProvider({ children }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+export function AuthProvider({ children, isLoggedIn, setIsLoggedIn }) {
   const [currentUser, setCurrentUser] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -33,7 +32,17 @@ export function AuthProvider({ children }) {
     })
       .then(() => {
         const userDocRef = doc(collection(fireStoreDB, "users"), user.uid);
-        const userData = { username: username, friends: {}, timtable: { Monday: null, Tuesday: null, Wednesday: null, Thursday: null, Friday: null} };
+        const userData = {
+          username: username,
+          friends: {},
+          timtable: {
+            Monday: null,
+            Tuesday: null,
+            Wednesday: null,
+            Thursday: null,
+            Friday: null,
+          },
+        };
         setDoc(userDocRef, userData);
       })
       .then(() => {
@@ -74,14 +83,14 @@ export function AuthProvider({ children }) {
     });
 
     return unsubscribe;
-  }, [currentUser]);
+  }, [currentUser, setIsLoggedIn]);
 
   const value = {
+    isLoggedIn,
     currentUser,
     login,
     signup,
     logout,
-    isLoggedIn,
   };
 
   return (
