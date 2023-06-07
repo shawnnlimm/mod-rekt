@@ -2,8 +2,11 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { fireStoreDB } from "../config/firebase";
 import { collection, getDocs } from "firebase/firestore";
+import { auth } from "../config/firebase";
 import WelcomeMessage from "../components/WelcomeMessage";
 import Timetable from "../components/Timetable";
+import Test from "../components/Test";
+import CourseSearch from "../components/CourseSearch";
 
 const Profile = () => {
   const [users, setUsers] = useState([]);
@@ -19,17 +22,16 @@ const Profile = () => {
     getUsers();
   }, []);
 
+  const currentUser = users.filter((user) => user.id === auth.currentUser.uid);
+
   return (
     <div>
       <div>
         <WelcomeMessage />
         <div className="bg-gray-100 p-4 rounded-md">
-          {users.map((user) => (
+          {currentUser.map((user) => (
             <div key={user.id} className="mb-4">
-              <h2 className="text-lg font-semibold mb-2">
-                Name: {user.username}
-              </h2>
-              <h3 className="text-md font-semibold mb-1">Friends:</h3>
+              <h2 className="text-md font-semibold mb-1">Friends:</h2>
               <ul>
                 {user.friends &&
                   Object.entries(user.friends).map((friendKey) => (
@@ -42,6 +44,7 @@ const Profile = () => {
           ))}
         </div>
       </div>
+      <CourseSearch />
       <Timetable />
     </div>
   );

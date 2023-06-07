@@ -15,7 +15,8 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
-export function AuthProvider({ children, isLoggedIn, setIsLoggedIn }) {
+export function AuthProvider({ children, updateLogInStatus }) {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -77,13 +78,14 @@ export function AuthProvider({ children, isLoggedIn, setIsLoggedIn }) {
         setCurrentUser(userData.username);
         setIsLoggedIn(true);
       } else {
+        setCurrentUser(null);
         setIsLoggedIn(false);
       }
       setLoading(false);
     });
 
-    return unsubscribe;
-  }, [currentUser, setIsLoggedIn]);
+    return unsubscribe();
+  }, []);
 
   const value = {
     isLoggedIn,
