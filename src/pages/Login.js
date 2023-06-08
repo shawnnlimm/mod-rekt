@@ -18,9 +18,9 @@ export default function Login() {
       setLoading(true);
       await login(emailRef.current.value, passwordRef.current.value);
       navigate("/profile");
-      console.log("loggin");
     } catch (error) {
       setError("Failed to sign in");
+      setLoading(false);
       console.log(error);
     }
   }
