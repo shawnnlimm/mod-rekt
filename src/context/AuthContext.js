@@ -7,7 +7,7 @@ import {
 } from "firebase/auth";
 import { fireStoreDB, realTimeDB } from "../config/firebase";
 import { set, ref, update } from "firebase/database";
-import { collection, getDoc, doc, setDoc } from "firebase/firestore";
+import { collection, getDoc, doc, setDoc, getDocs, query, where } from "firebase/firestore";
 
 const AuthContext = React.createContext();
 
@@ -20,7 +20,21 @@ export function AuthProvider({ children, updateLogInStatus }) {
   const [currentUser, setCurrentUser] = useState("");
   const [loading, setLoading] = useState(true);
 
+  async function checkUsernameExists(username) {
+    const querySnapshot = await getDocs(
+      query(collection(fireStoreDB, "users"), where("username", "==", username))
+    );
+    return !querySnapshot.empty;
+  }
+
   async function signup(username, email, password) {
+    const usernameExists = await checkUsernameExists(username);
+
+    if (usernameExists) {
+      alert("Username is already taken. Please choose a different username.");
+      return;
+    }
+
     const userCredential = await createUserWithEmailAndPassword(
       auth,
       email,

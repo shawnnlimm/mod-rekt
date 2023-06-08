@@ -5,7 +5,6 @@ import { collection, getDocs } from "firebase/firestore";
 import { auth } from "../config/firebase";
 import WelcomeMessage from "../components/WelcomeMessage";
 import Timetable from "../components/Timetable";
-import Test from "../components/Test";
 import CourseSearch from "../components/CourseSearch";
 
 const Profile = () => {
