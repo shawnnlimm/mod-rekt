@@ -10,11 +10,9 @@ import Home from "./pages/Home";
 import Dropdown from "./components/Dropdown";
 import PrivateRoute from "./components/PrivateRoute";
 import Profile from "./pages/Profile";
-import NavbarDashboard from "./components/NavbarDashboard";
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const toggle = () => {
     setIsOpen(!isOpen);
@@ -37,12 +35,8 @@ function App() {
   return (
     <>
       <Dropdown isOpen={isOpen} toggle={toggle} />
-      <AuthProvider isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}>
-        {isLoggedIn ? (
-          <NavbarDashboard toggle={toggle} />
-        ) : (
-          <NavbarHome toggle={toggle} />
-        )}
+      <AuthProvider>
+        <NavbarHome toggle={toggle} />
         <Routes>
           <Route exact path="/" element={<Home />}></Route>
           <Route path="/signup" element={<Signup />}></Route>
