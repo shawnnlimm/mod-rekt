@@ -4,7 +4,9 @@ import { courseData } from "../data/CourseData";
 
 const CourseSearch = () => {
   const [search, setSearch] = useState("");
-  const handleAdd = () => {};
+
+  function handleAdd() {}
+
   return (
     <div>
       <form className="flex justify-center my-10">
@@ -15,13 +17,6 @@ const CourseSearch = () => {
             placeholder="Search courses to add"
             onChange={(e) => setSearch(e.target.value)}
           />
-          <button
-            className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-r"
-            type="add"
-            onClick={handleAdd}
-          >
-            Add
-          </button>
         </div>
       </form>
       <div className="flex justify-center">
@@ -29,6 +24,7 @@ const CourseSearch = () => {
           <thead>
             <tr className="text-lg">
               <th>CourseId</th>
+              <th>Day</th>
               <th>Timeslot</th>
             </tr>
           </thead>
@@ -42,7 +38,17 @@ const CourseSearch = () => {
               .map((course) => (
                 <tr key={course.courseId}>
                   <td>{course.courseId}</td>
+                  <td>{course.day}</td>
                   <td>{course.timeslot}</td>
+                  <td>
+                    <button
+                      className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+                      type="add"
+                      onClick={handleAdd}
+                    >
+                      Add
+                    </button>
+                  </td>
                 </tr>
               ))}
           </tbody>
