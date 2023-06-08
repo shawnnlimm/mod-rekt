@@ -5,6 +5,8 @@ import { collection, getDocs } from "firebase/firestore";
 import { auth } from "../config/firebase";
 import WelcomeMessage from "../components/WelcomeMessage";
 import Timetable from "../components/Timetable";
+import Test from "../components/Test";
+import CourseSearch from "../components/CourseSearch";
 
 const Profile = () => {
   const [users, setUsers] = useState([]);
@@ -20,7 +22,7 @@ const Profile = () => {
     getUsers();
   }, []);
 
-  const currentUser = users.filter(user => user.id === auth.currentUser.uid);
+  const currentUser = users.filter((user) => user.id === auth.currentUser.uid);
 
   return (
     <div>
@@ -42,6 +44,7 @@ const Profile = () => {
           ))}
         </div>
       </div>
+      <CourseSearch />
       <Timetable />
     </div>
   );
