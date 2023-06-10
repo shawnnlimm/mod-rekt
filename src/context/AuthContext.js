@@ -7,7 +7,15 @@ import {
 } from "firebase/auth";
 import { fireStoreDB, realTimeDB } from "../config/firebase";
 import { set, ref, update } from "firebase/database";
-import { collection, getDoc, doc, setDoc, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDoc,
+  doc,
+  setDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 
 const AuthContext = React.createContext();
 
@@ -17,7 +25,8 @@ export function useAuth() {
 
 export function AuthProvider({ children, updateLogInStatus }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentUser, setCurrentUser] = useState("");
+  const [currentUsername, setCurrentUsername] = useState("");
+  const [currentUserId, setCurrentUserId] = useState("");
   const [loading, setLoading] = useState(true);
 
   async function checkUsernameExists(username) {
@@ -50,12 +59,12 @@ export function AuthProvider({ children, updateLogInStatus }) {
         const userData = {
           username: username,
           friends: {},
-          timtable: {
-            Monday: null,
-            Tuesday: null,
-            Wednesday: null,
-            Thursday: null,
-            Friday: null,
+          timetable: {
+            Monday: {},
+            Tuesday: {},
+            Wednesday: {},
+            Thursday: {},
+            Friday: {},
           },
         };
         setDoc(userDocRef, userData);
@@ -73,13 +82,15 @@ export function AuthProvider({ children, updateLogInStatus }) {
       password
     );
     const user = userCredential.user;
+    setCurrentUserId(user.uid);
     update(ref(realTimeDB, "users/" + user.uid), {
       last_login: lgDate,
     });
   }
 
   function logout() {
-    setCurrentUser("");
+    setCurrentUsername("");
+    setCurrentUserId("");
     return signOut(auth);
   }
 
@@ -89,10 +100,12 @@ export function AuthProvider({ children, updateLogInStatus }) {
         const userDoc = doc(fireStoreDB, "users", user.uid);
         const docSnapshot = await getDoc(userDoc);
         const userData = docSnapshot.data();
-        setCurrentUser(userData.username);
+        setCurrentUsername(userData.username);
+        setCurrentUserId(user.uid);
         setIsLoggedIn(true);
       } else {
-        setCurrentUser(null);
+        setCurrentUsername("");
+        setCurrentUserId("");
         setIsLoggedIn(false);
       }
       setLoading(false);
@@ -103,7 +116,8 @@ export function AuthProvider({ children, updateLogInStatus }) {
 
   const value = {
     isLoggedIn,
-    currentUser,
+    currentUsername,
+    currentUserId,
     login,
     signup,
     logout,
