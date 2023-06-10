@@ -2,12 +2,12 @@ import React from "react";
 import { useAuth } from "../context/AuthContext";
 
 const WelcomeMessage = () => {
-  const { currentUser } = useAuth();
+  const { currentUsername } = useAuth();
 
   return (
     <div className="text-center mt-8">
       <div className="text-4xl font-bold mb-4">
-        Welcome back, {currentUser}!
+        Welcome back, {currentUsername}!
       </div>
     </div>
   );
