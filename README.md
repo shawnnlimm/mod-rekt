@@ -1,6 +1,6 @@
 # ModRekt
 
-## Proposed Level of Achivement
+## Proposed Level of Achievement
 
 Apollo
 
