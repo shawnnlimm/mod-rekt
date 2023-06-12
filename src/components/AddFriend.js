@@ -36,7 +36,7 @@ const AddFriend = () => {
       const userDocSnapshot = await getDoc(userDocRef);
       const userFriends = userDocSnapshot.data().friends;
       userFriends[friendUsername] = true;
-      await setDoc(userDocRef, { friends: userFriends });
+      await setDoc(userDocRef, { friends : userFriends}, { merge: true });
       setFriendUsername("");
       setSearchError("");
     }
