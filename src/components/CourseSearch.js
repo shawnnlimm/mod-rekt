@@ -13,16 +13,9 @@ import {
 } from "firebase/firestore";
 import { fireStoreDB } from "../config/firebase";
 
-const CourseSearch = () => {
+const CourseSearch = ({ userModules, setUserModules }) => {
   const [search, setSearch] = useState("");
   const { currentUserId, currentUsername } = useAuth();
-  const [userModules, setUserModules] = useState([]);
-
-  /* 
-    userModules contains an array of objects, each object has a 
-    day data and a modules data. for example, userModules[0].day == Monday,
-    and userModules[0].modules is an array containing all the chosen modules
-  */
 
   const handleAdd = async (course) => {
     try {

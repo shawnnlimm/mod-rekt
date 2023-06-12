@@ -6,9 +6,16 @@ import { auth } from "../config/firebase";
 import WelcomeMessage from "../components/WelcomeMessage";
 import Timetable from "../components/Timetable";
 import CourseSearch from "../components/CourseSearch";
+import AddFriend from "../components/AddFriend";
 
 const Profile = () => {
   const [users, setUsers] = useState([]);
+  const [userModules, setUserModules] = useState([]);
+
+  /* 
+    userModules contains an array of array, where the array at 
+    each index consist of [day, moduleCode, timeslot]
+  */
 
   useEffect(() => {
     const getUsers = async () => {
@@ -27,6 +34,7 @@ const Profile = () => {
     <div>
       <div>
         <WelcomeMessage />
+        <AddFriend />
         <div className="bg-gray-100 p-4 rounded-md">
           {currentUser.map((user) => (
             <div key={user.id} className="mb-4">
@@ -43,8 +51,8 @@ const Profile = () => {
           ))}
         </div>
       </div>
-      <CourseSearch />
-      <Timetable />
+      <CourseSearch userModules={userModules} setUserModules={setUserModules} />
+      <Timetable userModules={userModules} />
     </div>
   );
 };

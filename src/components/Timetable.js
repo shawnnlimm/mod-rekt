@@ -1,6 +1,6 @@
 import React from "react";
 
-const Timetable = () => {
+const Timetable = ({ userModules }) => {
   const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
   const timeSlots = [
     "0800",
@@ -45,6 +45,22 @@ const Timetable = () => {
                     className="border border-gray-300 py-2 px-4 text-center"
                   >
                     {/* Render module events here */}
+                    {userModules.map((event) => {
+                      const eventStartTime = event[2].split(" - ")[0]; // Extract the start time from the duration
+                      const eventEndTime = event[2].split(" - ")[1]; // Extract the end time from the duration
+                      if (
+                        event[0] === day &&
+                        timeSlot >= eventStartTime &&
+                        timeSlot <= eventEndTime
+                      ) {
+                        return (
+                          <div key={`${event[0]}-${event[1]}-${event[2]}`}>
+                            Module: {event[1]}, Timeslot: {event[2]}
+                          </div>
+                        );
+                      }
+                      return null;
+                    })}
                   </td>
                 ))}
               </tr>
