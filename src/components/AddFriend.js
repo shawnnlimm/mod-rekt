@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { fireStoreDB } from "../config/firebase";
 import { auth } from "../config/firebase";
+import { useAuth } from "../context/AuthContext";
 import {
   doc,
   setDoc,
@@ -15,6 +16,7 @@ import {
 const AddFriend = () => {
   const [friendUsername, setFriendUsername] = useState("");
   const [searchError, setSearchError] = useState("");
+  const { currentUsername } = useAuth();
 
   const handleInputChange = async (event) => {
     setFriendUsername(event.target.value);
@@ -32,13 +34,17 @@ const AddFriend = () => {
     if (querySnapshot.empty) {
       setSearchError("User not found. Please enter a valid username.");
     } else {
-      const userDocRef = doc(fireStoreDB, "users", auth.currentUser.uid);
-      const userDocSnapshot = await getDoc(userDocRef);
-      const userFriends = userDocSnapshot.data().friends;
-      userFriends[friendUsername] = true;
-      await setDoc(userDocRef, { friends : userFriends}, { merge: true });
-      setFriendUsername("");
-      setSearchError("");
+      if (friendUsername === currentUsername) {
+        setSearchError("User cannot be yourself. Please enter another username.");
+      } else {
+        const userDocRef = doc(fireStoreDB, "users", auth.currentUser.uid);
+        const userDocSnapshot = await getDoc(userDocRef);
+        const userFriends = userDocSnapshot.data().friends;
+        userFriends[friendUsername] = true;
+        await setDoc(userDocRef, { friends : userFriends}, { merge: true });
+        setFriendUsername("");
+        setSearchError("");
+      }
     }
   };
 
