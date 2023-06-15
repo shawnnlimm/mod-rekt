@@ -22,10 +22,11 @@ const CourseSearch = ({ userModules, setUserModules }) => {
       const day = course.day;
       const courseId = course.courseId;
       const timeslot = course.timeslot;
+      const type = course.type;
       const userDocRef = doc(fireStoreDB, "users", currentUserId);
       const userDocSnapshot = await getDoc(userDocRef);
       const userDayMap = userDocSnapshot.data().timetable;
-      userDayMap[day][courseId] = timeslot;
+      userDayMap[day][courseId + " " + type] = timeslot;
       await setDoc(userDocRef, { timetable: userDayMap }, { merge: true });
       fetchUserModules();
     } catch (err) {
@@ -37,10 +38,11 @@ const CourseSearch = ({ userModules, setUserModules }) => {
     try {
       const day = course.day;
       const courseId = course.courseId;
+      const type = course.type;
       const userDocRef = doc(fireStoreDB, "users", currentUserId);
       const userDocSnapshot = await getDoc(userDocRef);
       const userDayMap = { ...userDocSnapshot.data() };
-      delete userDayMap.timetable[day][courseId];
+      delete userDayMap.timetable[day][courseId + " " + type];
       await setDoc(userDocRef, userDayMap);
       console.log("Course removed successfully.");
       fetchUserModules();
@@ -99,6 +101,7 @@ const CourseSearch = ({ userModules, setUserModules }) => {
               <th>CourseId</th>
               <th>Day</th>
               <th>Timeslot</th>
+              <th>Type</th>
             </tr>
           </thead>
           <tbody className="text-center">
@@ -113,6 +116,7 @@ const CourseSearch = ({ userModules, setUserModules }) => {
                   <td>{course.courseId}</td>
                   <td>{course.day}</td>
                   <td>{course.timeslot}</td>
+                  <td>{course.type}</td>
                   <td>
                     <button
                       className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
@@ -135,27 +139,6 @@ const CourseSearch = ({ userModules, setUserModules }) => {
               ))}
           </tbody>
         </table>
-      </div>
-      <div className="flex justify-center mt-10">
-        <h1>User Modules</h1>
-        <ul>
-          {userModules
-            .sort((a, b) => {
-              const daysOfWeek = [
-                "Monday",
-                "Tuesday",
-                "Wednesday",
-                "Thursday",
-                "Friday",
-              ];
-              return daysOfWeek.indexOf(a[0]) - daysOfWeek.indexOf(b[0]);
-            })
-            .map(([day, moduleCode, timeslot]) => (
-              <li key={`${day}-${moduleCode}-${timeslot}`}>
-                Day: {day}, Module: {moduleCode} ({timeslot})
-              </li>
-            ))}
-        </ul>
       </div>
     </div>
   );

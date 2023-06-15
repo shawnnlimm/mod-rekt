@@ -5,8 +5,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
-import { fireStoreDB, realTimeDB } from "../config/firebase";
-import { set, ref, update } from "firebase/database";
+import { fireStoreDB } from "../config/firebase";
 import {
   collection,
   getDoc,
@@ -16,6 +15,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = React.createContext();
 
@@ -28,6 +28,7 @@ export function AuthProvider({ children }) {
   const [currentUsername, setCurrentUsername] = useState("");
   const [currentUserId, setCurrentUserId] = useState("");
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   async function checkUsernameExists(username) {
     const querySnapshot = await getDocs(
@@ -50,32 +51,24 @@ export function AuthProvider({ children }) {
       password
     );
     const user = userCredential.user;
-    set(ref(realTimeDB, "users/" + user.uid), {
-      email: email,
-      password: password,
-    })
-      .then(() => {
-        const userDocRef = doc(collection(fireStoreDB, "users"), user.uid);
-        const userData = {
-          username: username,
-          friends: {},
-          timetable: {
-            Monday: {},
-            Tuesday: {},
-            Wednesday: {},
-            Thursday: {},
-            Friday: {},
-          },
-        };
-        setDoc(userDocRef, userData);
-      })
-      .then(() => {
-        alert("user created succcessfully");
-      });
+
+    const userDocRef = doc(collection(fireStoreDB, "users"), user.uid);
+    const userData = {
+      username: username,
+      friends: {},
+      timetable: {
+        Monday: {},
+        Tuesday: {},
+        Wednesday: {},
+        Thursday: {},
+        Friday: {},
+      },
+    };
+    setDoc(userDocRef, userData);
+    alert("user created succcessfully");
   }
 
   async function login(email, password) {
-    var lgDate = new Date();
     const userCredential = await signInWithEmailAndPassword(
       auth,
       email,
@@ -83,12 +76,16 @@ export function AuthProvider({ children }) {
     );
     const user = userCredential.user;
     setCurrentUserId(user.uid);
-    update(ref(realTimeDB, "users/" + user.uid), {
-      last_login: lgDate,
-    });
+    const userDoc = doc(fireStoreDB, "users", user.uid);
+    const docSnapshot = await getDoc(userDoc);
+    const userData = docSnapshot.data();
+    setCurrentUsername(userData.username);
+    setIsLoggedIn(true);
+    navigate(`/profile/${user.uid}`);
   }
 
   function logout() {
+    setIsLoggedIn(false);
     setCurrentUsername("");
     setCurrentUserId("");
     return signOut(auth);
@@ -96,12 +93,13 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
-      if (user !== null) {
+      if (user) {
         const userDoc = doc(fireStoreDB, "users", user.uid);
         const docSnapshot = await getDoc(userDoc);
         const userData = docSnapshot.data();
         setCurrentUsername(userData.username);
         setCurrentUserId(user.uid);
+        console.log(currentUserId);
         setIsLoggedIn(true);
       } else {
         setCurrentUsername("");
@@ -112,7 +110,7 @@ export function AuthProvider({ children }) {
     });
 
     return unsubscribe();
-  }, []);
+  });
 
   const value = {
     isLoggedIn,

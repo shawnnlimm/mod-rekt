@@ -26,7 +26,7 @@ const Profile = () => {
     };
 
     getUsers();
-  }, []);
+  }, [userModules]);
 
   const currentUser = users.filter((user) => user.id === auth.currentUser.uid);
 

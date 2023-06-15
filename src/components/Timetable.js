@@ -53,11 +53,7 @@ const Timetable = ({ userModules }) => {
                         timeSlot >= eventStartTime &&
                         timeSlot <= eventEndTime
                       ) {
-                        return (
-                          <div key={`${event[0]}-${event[1]}-${event[2]}`}>
-                            Module: {event[1]}, Timeslot: {event[2]}
-                          </div>
-                        );
+                        return <div key={`${event[1]}`}>{event[1]}</div>;
                       }
                       return null;
                     })}
