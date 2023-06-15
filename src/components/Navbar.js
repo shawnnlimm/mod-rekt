@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const Navbar = ({ toggle }) => {
-  const { logout } = useAuth();
-  const { isLoggedIn } = useAuth();
+  const { logout, isLoggedIn, currentUserId } = useAuth();
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(isLoggedIn);
 
   const handleLogout = async () => {
     try {
@@ -14,7 +14,11 @@ const Navbar = ({ toggle }) => {
     }
   };
 
-  if (isLoggedIn) {
+  useEffect(() => {
+    setIsUserLoggedIn(isLoggedIn);
+  }, [isLoggedIn]);
+
+  if (isUserLoggedIn) {
     return (
       <nav
         className="flex justify-between items-center h-16 bg-white text-black relative shadow-sm font-mono"
@@ -41,11 +45,17 @@ const Navbar = ({ toggle }) => {
           </svg>
         </div>
         <div className="pr-8 md:block hidden">
-          <Link className="p-4" to="/">
-            Home
+          <Link className="p-4" to={`/profile/${currentUserId}`}>
+            Timetable
           </Link>
           <Link className="p-4" to="/about">
             About
+          </Link>
+          <Link className="p-4" to={`/profile/${currentUserId}/friends`}>
+            Friends
+          </Link>
+          <Link className="p-4" to={`/profile/${currentUserId}/courses`}>
+            Courses
           </Link>
           <Link className="p-4" to="/">
             <button onClick={handleLogout}>Logout</button>
@@ -83,11 +93,11 @@ const Navbar = ({ toggle }) => {
           <Link className="p-4" to="/">
             Home
           </Link>
-          <Link className="p-4" to="/login">
-            Login
-          </Link>
           <Link className="p-4" to="/about">
             About
+          </Link>
+          <Link className="p-4" to="/login">
+            Login
           </Link>
           <Link className="p-4" to="/">
             <button onClick={handleLogout}>Logout</button>

@@ -1,21 +1,15 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { courseData } from "../data/CourseData";
 import { useAuth } from "../context/AuthContext";
-import {
-  doc,
-  getDoc,
-  setDoc,
-  query,
-  collection,
-  where,
-  getDocs,
-} from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { fireStoreDB } from "../config/firebase";
+import { useModuleContext } from "../context/UserModuleContext";
 
-const CourseSearch = ({ userModules, setUserModules }) => {
+const CourseSearch = () => {
   const [search, setSearch] = useState("");
-  const { currentUserId, currentUsername } = useAuth();
+  const { currentUserId } = useAuth();
+  const { fetchUserModules } = useModuleContext();
 
   const handleAdd = async (course) => {
     try {
@@ -28,6 +22,7 @@ const CourseSearch = ({ userModules, setUserModules }) => {
       const userDayMap = userDocSnapshot.data().timetable;
       userDayMap[day][courseId + " " + type] = timeslot;
       await setDoc(userDocRef, { timetable: userDayMap }, { merge: true });
+      console.log("Course added successfully.");
       fetchUserModules();
     } catch (err) {
       console.log("Error adding course to fireStoreDb", err);
@@ -50,37 +45,6 @@ const CourseSearch = ({ userModules, setUserModules }) => {
       console.log("Error removing course from fireStoreDb", err);
     }
   };
-
-  const fetchUserModules = async () => {
-    const modulesQuery = query(
-      collection(fireStoreDB, "users"),
-      where("username", "==", currentUsername)
-    );
-
-    try {
-      const querySnapshot = await getDocs(modulesQuery);
-      const userModulesData = [];
-
-      querySnapshot.forEach((doc) => {
-        const userData = doc.data();
-        const dayMap = userData.timetable;
-        Object.keys(dayMap).forEach((day) => {
-          const moduleCodeMap = dayMap[day];
-          Object.entries(moduleCodeMap).forEach(([moduleCode, timeslot]) => {
-            userModulesData.push([day, moduleCode, timeslot]);
-          });
-        });
-      });
-
-      setUserModules(userModulesData);
-    } catch (err) {
-      console.log("Error fetching user modules", err);
-    }
-  };
-
-  useEffect(() => {
-    fetchUserModules();
-  }, [currentUsername]);
 
   return (
     <div>

@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useModuleContext } from "../context/UserModuleContext";
 
-const Timetable = ({ userModules }) => {
+const Timetable = () => {
   const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
   const timeSlots = [
     "0800",
@@ -15,6 +16,12 @@ const Timetable = ({ userModules }) => {
     "1700",
     "1800",
   ];
+  const { userModules } = useModuleContext();
+  const [timetableData, setTimetableData] = useState([]);
+
+  useEffect(() => {
+    setTimetableData(userModules);
+  }, [userModules]);
 
   return (
     <div>
@@ -45,7 +52,7 @@ const Timetable = ({ userModules }) => {
                     className="border border-gray-300 py-2 px-4 text-center"
                   >
                     {/* Render module events here */}
-                    {userModules.map((event) => {
+                    {timetableData.map((event) => {
                       const eventStartTime = event[2].split(" - ")[0]; // Extract the start time from the duration
                       const eventEndTime = event[2].split(" - ")[1]; // Extract the end time from the duration
                       if (

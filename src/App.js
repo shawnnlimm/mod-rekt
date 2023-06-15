@@ -10,6 +10,9 @@ import Dropdown from "./components/Dropdown";
 import PrivateRoute from "./components/PrivateRoute";
 import Profile from "./pages/Profile";
 import Navbar from "./components/Navbar";
+import Friends from "./pages/Friends";
+import Courses from "./pages/Courses";
+import { UserModulesProvider } from "./context/UserModuleContext";
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
@@ -36,16 +39,29 @@ function App() {
     <>
       <Dropdown isOpen={isOpen} toggle={toggle} />
       <AuthProvider>
-        <Navbar toggle={toggle} />
-        <Routes>
-          <Route exact path="/" element={<Home />}></Route>
-          <Route path="/signup" element={<Signup />}></Route>
-          <Route path="/login" element={<Login />}></Route>
-          <Route path="/about" element={<About />}></Route>
-          <Route element={<PrivateRoute />}>
-            <Route path="/profile/:currentUserId" element={<Profile />}></Route>
-          </Route>
-        </Routes>
+        <UserModulesProvider>
+          <Navbar toggle={toggle} />
+          <Routes>
+            <Route exact path="/" element={<Home />}></Route>
+            <Route path="/signup" element={<Signup />}></Route>
+            <Route path="/login" element={<Login />}></Route>
+            <Route path="/about" element={<About />}></Route>
+            <Route element={<PrivateRoute />}>
+              <Route
+                path="/profile/:currentUserId"
+                element={<Profile />}
+              ></Route>
+              <Route
+                path="/profile/:currentUserId/friends"
+                element={<Friends />}
+              ></Route>
+              <Route
+                path="/profile/:currentUserId/courses"
+                element={<Courses />}
+              ></Route>
+            </Route>
+          </Routes>
+        </UserModulesProvider>
       </AuthProvider>
     </>
   );
