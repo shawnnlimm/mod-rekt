@@ -5,8 +5,7 @@ import { auth } from "../config/firebase";
 import { useAuth } from "../context/AuthContext";
 import {
   doc,
-  setDoc,
-  getDoc,
+  updateDoc,
   query,
   collection,
   where,
@@ -37,11 +36,12 @@ const AddFriend = () => {
       if (friendUsername === currentUsername) {
         setSearchError("User cannot be yourself. Please enter another username.");
       } else {
-        const userDocRef = doc(fireStoreDB, "users", auth.currentUser.uid);
-        const userDocSnapshot = await getDoc(userDocRef);
-        const userFriends = userDocSnapshot.data().friends;
-        userFriends[friendUsername] = true;
-        await setDoc(userDocRef, { friends : userFriends}, { merge: true });
+        const friendId = querySnapshot.docs[0].id;
+        // Send friend request
+        const userDocRef = doc(fireStoreDB, "users", friendId);
+        await updateDoc(userDocRef, {
+          [`friendRequests.${auth.currentUser.uid}`]: currentUsername,
+        });
         setFriendUsername("");
         setSearchError("");
       }
