@@ -60,6 +60,7 @@ const AddFriend = () => {
           await updateDoc(userDocRef, {
             [`friendRequests.${auth.currentUser.uid}`]: currentUsername,
           });
+          alert("Friend request sent.");
           setFriendUsername("");
           setSearchError("");
         }
