@@ -34,7 +34,9 @@ const AddFriend = () => {
       setSearchError("User not found. Please enter a valid username.");
     } else {
       if (friendUsername === currentUsername) {
-        setSearchError("User cannot be yourself. Please enter another username.");
+        setSearchError(
+          "User cannot be yourself. Please enter another username."
+        );
       } else {
         const friendId = querySnapshot.docs[0].id;
         // Send friend request
@@ -49,7 +51,7 @@ const AddFriend = () => {
   };
 
   return (
-    <div className="flex items-center space-x-4">
+    <div className="flex justify-center space-x-4 my-10">
       <input
         type="text"
         value={friendUsername}

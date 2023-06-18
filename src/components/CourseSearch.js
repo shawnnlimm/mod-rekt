@@ -47,18 +47,18 @@ const CourseSearch = () => {
   };
 
   return (
-    <div>
-      <form className="flex justify-center my-10">
+    <div className="mt-20">
+      <form className="flex justify-center my-10 font-mono">
         <div className="flex w-1/3">
           <input
-            className="border border-gray-300 rounded-l py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 flex-grow"
+            className="border border-gray-300 rounded-l py-2 px-4 focus:outline-none focus:ring-2 font-mono  focus:ring-blue-500 flex-grow"
             type="text"
             placeholder="Search courses to add"
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
       </form>
-      <div className="flex justify-center">
+      <div className="flex justify-center font-mono">
         <table className="w-1/3">
           <thead>
             <tr className="text-lg">

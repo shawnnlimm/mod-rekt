@@ -25,7 +25,7 @@ const Timetable = () => {
 
   return (
     <div>
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center mt-20 font-mono">
         <table className="table-auto border border-gray-300 w-2/3">
           <thead>
             <tr>
