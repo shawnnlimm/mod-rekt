@@ -50,6 +50,29 @@ const Friends = () => {
     }
   };
 
+  const handleDeclineFriendRequest = async (friendUsername) => {
+    const querySnapshot = await getDocs(
+      query(
+        collection(fireStoreDB, "users"),
+        where("username", "==", friendUsername)
+      )
+    );
+    const friendID = querySnapshot.docs[0].id;
+    const userDocRef = doc(fireStoreDB, "users", auth.currentUser.uid);
+    const userDocSnapshot = await getDoc(userDocRef);
+
+    if (userDocSnapshot.exists()) {
+      // Remove friend request and add friend to the friends list
+      await updateDoc(userDocRef, {
+        [`friendRequests.${friendID}`]: deleteField(),
+      });
+
+      setFriendRequests((prevRequests) =>
+        prevRequests.filter((request) => request !== friendID)
+      );
+    }
+  };
+
   useEffect(() => {
     const fetchFriendRequests = async () => {
       const userDocRef = doc(fireStoreDB, "users", auth.currentUser.uid);
@@ -78,25 +101,40 @@ const Friends = () => {
   }, []);
 
   return (
-    <div>
+    <div className="container mx-auto p-8">
       <h1>
         <AddFriend />
       </h1>
-      <h2>Friend Requests</h2>
-      {friendRequests.map((requestId) => (
-        <div key={requestId}>
-          <span>{requestId}</span>
-          <button onClick={() => handleAcceptFriendRequest(requestId)}>
-            Accept
-          </button>
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold mb-4">Friend Requests</h2>
+        {friendRequests.length > 0 ? (
+          friendRequests.map((requestId) => (
+            <div key={requestId} className="flex items-center justify-between bg-gray-200 rounded-md p-4 mb-4">
+              <span className="text-lg">{requestId}</span>
+              <button className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded"
+                      onClick={() => handleAcceptFriendRequest(requestId)}>
+                Accept
+              </button>
+              <button className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
+                      onClick={() => handleDeclineFriendRequest(requestId)}>
+                Decline
+              </button>
+            </div>
+          ))
+        ) : (
+          <p>No friend requests.</p>
+        )}
+      </div>
+      <h2 className="text-2xl font-bold mb-4">Friends List</h2>
+      {friendsList.length > 0 ? (
+        friendsList.map((friendId) => (
+        <div key={friendId} className="bg-gray-200 rounded-md p-4 mb-4">
+          <span className="text-lg">{friendId}</span>
         </div>
-      ))}
-      <h3>Friends List</h3>
-      {friendsList.map((friendId) => (
-        <div key={friendId}>
-          <span>{friendId}</span>
-        </div>
-      ))}
+      ))
+      ) : (
+        <p>No friends added.</p>
+      )}
     </div>
   );
 };
