@@ -20,11 +20,11 @@ const Friends = () => {
   const [friendsList, setFriendsList] = useState([]);
   const { currentUsername } = useAuth();
 
-  const handleAcceptFriendRequest = async (friendId) => {
+  const handleAcceptFriendRequest = async (friendUsername) => {
     const querySnapshot = await getDocs(
       query(
         collection(fireStoreDB, "users"),
-        where("username", "==", friendId)
+        where("username", "==", friendUsername)
       )
     );
     const friendID = querySnapshot.docs[0].id;
@@ -32,13 +32,10 @@ const Friends = () => {
     const userDocSnapshot = await getDoc(userDocRef);
   
     if (userDocSnapshot.exists()) {
-      const userData = userDocSnapshot.data();
-      const friendUsername = userData.friendRequests[friendID];
-  
       // Remove friend request and add friend to the friends list
       await updateDoc(userDocRef, {
         [`friendRequests.${friendID}`]: deleteField(),
-        [`friends.${friendID}`]: friendId,
+        [`friends.${friendID}`]: friendUsername,
       });
   
       // Update the friend's friends list
