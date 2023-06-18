@@ -5,6 +5,7 @@ import { auth } from "../config/firebase";
 import { useAuth } from "../context/AuthContext";
 import {
   doc,
+  getDoc,
   updateDoc,
   query,
   collection,
@@ -37,13 +38,29 @@ const AddFriend = () => {
         setSearchError("User cannot be yourself. Please enter another username.");
       } else {
         const friendId = querySnapshot.docs[0].id;
-        // Send friend request
         const userDocRef = doc(fireStoreDB, "users", friendId);
-        await updateDoc(userDocRef, {
-          [`friendRequests.${auth.currentUser.uid}`]: currentUsername,
-        });
-        setFriendUsername("");
-        setSearchError("");
+        const userDocSnapshot = await getDoc(userDocRef);
+        const userData = userDocSnapshot.data();
+        const friendRequests = Object.keys(userData.friendRequests || {});
+        const friendsList = Object.keys(userData.friends || {});
+        const currentuserDocRef = doc(fireStoreDB, "users", auth.currentUser.uid);
+        const currentuserDocSnapshot = await getDoc(currentuserDocRef);
+        const currentuserData = currentuserDocSnapshot.data();
+        const currentfriendRequests = Object.keys(currentuserData.friendRequests || {});
+        const currentfriendsList = Object.keys(currentuserData.friends || {});
+        if (friendRequests.includes(auth.currentUser.uid)) {
+          setSearchError("Friend request has already been sent. Please wait for request to be accepted.");
+        } else if (friendsList.includes(auth.currentUser.uid) || currentfriendsList.includes(friendId)) {
+          setSearchError("User is already your friend!");
+        } else if (currentfriendRequests.includes(friendId)) {
+          setSearchError("User is already in your requests!");
+        } else {
+          await updateDoc(userDocRef, {
+            [`friendRequests.${auth.currentUser.uid}`]: currentUsername,
+          });
+          setFriendUsername("");
+          setSearchError("");
+        }
       }
     }
   };
