@@ -12,7 +12,7 @@ import {
   query,
   collection,
   where,
-  deleteField
+  deleteField,
 } from "firebase/firestore";
 
 const Friends = () => {
@@ -30,21 +30,23 @@ const Friends = () => {
     const friendID = querySnapshot.docs[0].id;
     const userDocRef = doc(fireStoreDB, "users", auth.currentUser.uid);
     const userDocSnapshot = await getDoc(userDocRef);
-  
+
     if (userDocSnapshot.exists()) {
       // Remove friend request and add friend to the friends list
       await updateDoc(userDocRef, {
         [`friendRequests.${friendID}`]: deleteField(),
         [`friends.${friendID}`]: friendUsername,
       });
-  
+
       // Update the friend's friends list
       const friendDocRef = doc(fireStoreDB, "users", friendID);
       await updateDoc(friendDocRef, {
         [`friends.${auth.currentUser.uid}`]: currentUsername,
       });
-  
-      setFriendRequests((prevRequests) => prevRequests.filter((request) => request !== friendID));
+
+      setFriendRequests((prevRequests) =>
+        prevRequests.filter((request) => request !== friendID)
+      );
     }
   };
 
@@ -73,7 +75,7 @@ const Friends = () => {
 
     fetchFriendRequests();
     fetchFriendsList();
-  }, [fireStoreDB, auth.currentUser.uid]);
+  }, []);
 
   return (
     <div>
@@ -81,18 +83,20 @@ const Friends = () => {
         <AddFriend />
       </h1>
       <h2>Friend Requests</h2>
-        {friendRequests.map((requestId) => (
-          <div key={requestId}>
-            <span>{requestId}</span>
-            <button onClick={() => handleAcceptFriendRequest(requestId)}>Accept</button>
-          </div>
-        ))}
+      {friendRequests.map((requestId) => (
+        <div key={requestId}>
+          <span>{requestId}</span>
+          <button onClick={() => handleAcceptFriendRequest(requestId)}>
+            Accept
+          </button>
+        </div>
+      ))}
       <h3>Friends List</h3>
-        {friendsList.map((friendId) => (
-          <div key={friendId}>
-            <span>{friendId}</span>
-          </div>
-        ))}
+      {friendsList.map((friendId) => (
+        <div key={friendId}>
+          <span>{friendId}</span>
+        </div>
+      ))}
     </div>
   );
 };
