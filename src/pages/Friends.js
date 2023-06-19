@@ -101,7 +101,7 @@ const Friends = () => {
   }, []);
 
   return (
-    <div className="container mx-auto p-8">
+    <div className="container mx-auto p-8 font-mono">
       <h1>
         <AddFriend />
       </h1>
@@ -109,14 +109,21 @@ const Friends = () => {
         <h2 className="text-2xl font-bold mb-4">Friend Requests</h2>
         {friendRequests.length > 0 ? (
           friendRequests.map((requestId) => (
-            <div key={requestId} className="flex items-center justify-between bg-gray-200 rounded-md p-4 mb-4">
+            <div
+              key={requestId}
+              className="flex items-center justify-between bg-gray-200 rounded-md p-4 mb-4"
+            >
               <span className="text-lg">{requestId}</span>
-              <button className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded"
-                      onClick={() => handleAcceptFriendRequest(requestId)}>
+              <button
+                className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded"
+                onClick={() => handleAcceptFriendRequest(requestId)}
+              >
                 Accept
               </button>
-              <button className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
-                      onClick={() => handleDeclineFriendRequest(requestId)}>
+              <button
+                className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
+                onClick={() => handleDeclineFriendRequest(requestId)}
+              >
                 Decline
               </button>
             </div>
@@ -128,10 +135,10 @@ const Friends = () => {
       <h2 className="text-2xl font-bold mb-4">Friends List</h2>
       {friendsList.length > 0 ? (
         friendsList.map((friendId) => (
-        <div key={friendId} className="bg-gray-200 rounded-md p-4 mb-4">
-          <span className="text-lg">{friendId}</span>
-        </div>
-      ))
+          <div key={friendId} className="bg-gray-200 rounded-md p-4 mb-4">
+            <span className="text-lg">{friendId}</span>
+          </div>
+        ))
       ) : (
         <p>No friends added.</p>
       )}
