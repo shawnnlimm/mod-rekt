@@ -5,6 +5,8 @@ import { useAuth } from "../context/AuthContext";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { fireStoreDB } from "../config/firebase";
 import { useModuleContext } from "../context/UserModuleContext";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Courses = () => {
   const [search, setSearch] = useState("");
@@ -20,10 +22,33 @@ const Courses = () => {
       const userDocRef = doc(fireStoreDB, "users", currentUserId);
       const userDocSnapshot = await getDoc(userDocRef);
       const userDayMap = userDocSnapshot.data().timetable;
-      userDayMap[day][courseId + " " + type] = timeslot;
-      await setDoc(userDocRef, { timetable: userDayMap }, { merge: true });
-      alert("Course added successfully!");
-      fetchUserModules();
+
+      if (courseId + " " + type in userDayMap[day]) {
+        toast.error("Course already added", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      } else {
+        userDayMap[day][courseId + " " + type] = timeslot;
+        await setDoc(userDocRef, { timetable: userDayMap }, { merge: true });
+        toast.success("Course added successfully!", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+        fetchUserModules();
+      }
     } catch (err) {
       console.log("Error adding course to fireStoreDb", err);
     }
@@ -33,14 +58,41 @@ const Courses = () => {
     try {
       const day = course.day;
       const courseId = course.courseId;
+      const timeslot = course.timeslot;
       const type = course.type;
       const userDocRef = doc(fireStoreDB, "users", currentUserId);
       const userDocSnapshot = await getDoc(userDocRef);
       const userDayMap = { ...userDocSnapshot.data() };
-      delete userDayMap.timetable[day][courseId + " " + type];
-      await setDoc(userDocRef, userDayMap);
-      alert("Course removed successfully!");
-      fetchUserModules();
+
+      if (
+        !(courseId + " " + type in userDayMap.timetable[day]) ||
+        userDayMap.timetable[day][courseId + " " + type] !== timeslot
+      ) {
+        toast.error("Course already removed", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      } else {
+        delete userDayMap.timetable[day][courseId + " " + type];
+        await setDoc(userDocRef, userDayMap);
+        toast.success("Course removed successfully!", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+        fetchUserModules();
+      }
     } catch (err) {
       console.log("Error removing course from fireStoreDb", err);
     }
@@ -48,6 +100,7 @@ const Courses = () => {
 
   return (
     <div className="mt-20">
+      <ToastContainer />
       <form className="flex justify-center my-10 font-mono">
         <div className="flex w-1/3">
           <input
