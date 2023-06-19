@@ -22,7 +22,7 @@ const Courses = () => {
       const userDayMap = userDocSnapshot.data().timetable;
       userDayMap[day][courseId + " " + type] = timeslot;
       await setDoc(userDocRef, { timetable: userDayMap }, { merge: true });
-      console.log("Course added successfully.");
+      alert("Course added successfully!");
       fetchUserModules();
     } catch (err) {
       console.log("Error adding course to fireStoreDb", err);
@@ -39,7 +39,7 @@ const Courses = () => {
       const userDayMap = { ...userDocSnapshot.data() };
       delete userDayMap.timetable[day][courseId + " " + type];
       await setDoc(userDocRef, userDayMap);
-      console.log("Course removed successfully.");
+      alert("Course removed successfully!");
       fetchUserModules();
     } catch (err) {
       console.log("Error removing course from fireStoreDb", err);

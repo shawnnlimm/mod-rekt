@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 const Navbar = ({ toggle }) => {
   const { logout, isLoggedIn, currentUserId } = useAuth();
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(isLoggedIn);
+  const [isFirstRender, setIsFirstRender] = useState(true);
 
   const handleLogout = async () => {
     try {
@@ -15,7 +16,12 @@ const Navbar = ({ toggle }) => {
   };
 
   useEffect(() => {
-    setIsUserLoggedIn(isLoggedIn);
+    if (!isFirstRender) {
+      setIsUserLoggedIn(isLoggedIn);
+    } else {
+      setIsFirstRender(false);
+      setIsUserLoggedIn(false);
+    }
   }, [isLoggedIn]);
 
   if (isUserLoggedIn) {
