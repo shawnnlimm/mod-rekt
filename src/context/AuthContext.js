@@ -16,6 +16,8 @@ import {
   where,
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AuthContext = React.createContext();
 
@@ -41,7 +43,19 @@ export function AuthProvider({ children }) {
     const usernameExists = await checkUsernameExists(username);
 
     if (usernameExists) {
-      alert("Username is already taken. Please choose a different username.");
+      toast.error(
+        "Username is already taken. Please choose a different username.",
+        {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        }
+      );
       return;
     }
 
@@ -54,6 +68,7 @@ export function AuthProvider({ children }) {
 
     const userDocRef = doc(collection(fireStoreDB, "users"), user.uid);
     const userData = {
+      friendRequests: {},
       username: username,
       friends: {},
       timetable: {
@@ -65,7 +80,16 @@ export function AuthProvider({ children }) {
       },
     };
     setDoc(userDocRef, userData);
-    alert("user created succcessfully");
+    toast.success("User created successfully!", {
+      position: "top-center",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
   }
 
   async function login(email, password) {
@@ -122,8 +146,11 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={value}>
-      {!loading && children}
-    </AuthContext.Provider>
+    <div>
+      <ToastContainer />
+      <AuthContext.Provider value={value}>
+        {!loading && children}
+      </AuthContext.Provider>
+    </div>
   );
 }

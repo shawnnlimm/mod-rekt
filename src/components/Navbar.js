@@ -20,7 +20,7 @@ const Navbar = ({ toggle }) => {
       setIsUserLoggedIn(isLoggedIn);
     } else {
       setIsFirstRender(false);
-      setIsUserLoggedIn(false);
+      setIsUserLoggedIn(isLoggedIn);
     }
   }, [isLoggedIn]);
 
@@ -104,9 +104,6 @@ const Navbar = ({ toggle }) => {
           </Link>
           <Link className="p-4" to="/login">
             Login
-          </Link>
-          <Link className="p-4" to="/">
-            <button onClick={handleLogout}>Logout</button>
           </Link>
         </div>
       </nav>

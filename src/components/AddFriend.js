@@ -12,6 +12,8 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AddFriend = () => {
   const [friendUsername, setFriendUsername] = useState("");
@@ -45,14 +47,25 @@ const AddFriend = () => {
         const userData = userDocSnapshot.data();
         const friendRequests = Object.keys(userData.friendRequests || {});
         const friendsList = Object.keys(userData.friends || {});
-        const currentuserDocRef = doc(fireStoreDB, "users", auth.currentUser.uid);
+        const currentuserDocRef = doc(
+          fireStoreDB,
+          "users",
+          auth.currentUser.uid
+        );
         const currentuserDocSnapshot = await getDoc(currentuserDocRef);
         const currentuserData = currentuserDocSnapshot.data();
-        const currentfriendRequests = Object.keys(currentuserData.friendRequests || {});
+        const currentfriendRequests = Object.keys(
+          currentuserData.friendRequests || {}
+        );
         const currentfriendsList = Object.keys(currentuserData.friends || {});
         if (friendRequests.includes(auth.currentUser.uid)) {
-          setSearchError("Friend request has already been sent. Please wait for request to be accepted.");
-        } else if (friendsList.includes(auth.currentUser.uid) || currentfriendsList.includes(friendId)) {
+          setSearchError(
+            "Friend request has already been sent. Please wait for request to be accepted."
+          );
+        } else if (
+          friendsList.includes(auth.currentUser.uid) ||
+          currentfriendsList.includes(friendId)
+        ) {
           setSearchError("User is already your friend!");
         } else if (currentfriendRequests.includes(friendId)) {
           setSearchError("User is already in your requests!");
@@ -60,7 +73,16 @@ const AddFriend = () => {
           await updateDoc(userDocRef, {
             [`friendRequests.${auth.currentUser.uid}`]: currentUsername,
           });
-          alert("Friend request sent.");
+          toast.success("Friend request sent!", {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
           setFriendUsername("");
           setSearchError("");
         }
@@ -70,6 +92,7 @@ const AddFriend = () => {
 
   return (
     <div className="flex justify-center space-x-4 my-10">
+      <ToastContainer />
       <input
         type="text"
         value={friendUsername}
