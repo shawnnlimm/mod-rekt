@@ -18,6 +18,7 @@ import {
 const Friends = () => {
   const [friendRequests, setFriendRequests] = useState([]);
   const [friendsList, setFriendsList] = useState([]);
+  const [refresh, setRefresh] = useState(false);
   const { currentUsername } = useAuth();
 
   const handleAcceptFriendRequest = async (friendUsername) => {
@@ -44,6 +45,7 @@ const Friends = () => {
         [`friends.${auth.currentUser.uid}`]: currentUsername,
       });
 
+      setRefresh((prevRefresh) => !prevRefresh);
       setFriendRequests((prevRequests) =>
         prevRequests.filter((request) => request !== friendID)
       );
@@ -67,6 +69,7 @@ const Friends = () => {
         [`friendRequests.${friendID}`]: deleteField(),
       });
 
+      setRefresh((prevRefresh) => !prevRefresh);
       setFriendRequests((prevRequests) =>
         prevRequests.filter((request) => request !== friendID)
       );
@@ -98,7 +101,7 @@ const Friends = () => {
 
     fetchFriendRequests();
     fetchFriendsList();
-  }, []);
+  }, [refresh]);
 
   return (
     <div className="container mx-auto p-8 font-mono">
