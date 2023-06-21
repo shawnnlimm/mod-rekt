@@ -88,6 +88,18 @@ const AddFriend = () => {
         }
       }
     }
+    if (searchError) {
+      toast.error(searchError, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    }
   };
 
   return (
@@ -98,7 +110,7 @@ const AddFriend = () => {
         value={friendUsername}
         onChange={handleInputChange}
         placeholder="Enter friend's username..."
-        className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500"
+        className="w-1/4 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500"
       />
       <button
         onClick={handleAddFriend}
@@ -106,7 +118,6 @@ const AddFriend = () => {
       >
         Add Friend
       </button>
-      {searchError && <p className="text-red-500">{searchError}</p>}
     </div>
   );
 };

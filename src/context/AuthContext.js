@@ -123,7 +123,6 @@ export function AuthProvider({ children }) {
         const userData = docSnapshot.data();
         setCurrentUsername(userData.username);
         setCurrentUserId(user.uid);
-        console.log(currentUserId);
         setIsLoggedIn(true);
       } else {
         setCurrentUsername("");

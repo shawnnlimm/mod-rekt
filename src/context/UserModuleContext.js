@@ -11,7 +11,9 @@ export function useModuleContext() {
 
 export function UserModulesProvider({ children }) {
   const [userModules, setUserModules] = useState([]);
+  const [friendModules, setFriendModules] = useState([]);
   const { currentUsername } = useAuth();
+  const [currentFriend, setCurrentFriend] = useState("");
 
   /* 
     userModules contains an array of array, where the array at 
@@ -44,13 +46,50 @@ export function UserModulesProvider({ children }) {
     }
   }
 
+  async function fetchFriendModules(friendUsername) {
+    const modulesQuery = query(
+      collection(fireStoreDB, "users"),
+      where("username", "==", friendUsername)
+    );
+
+    try {
+      setCurrentFriend(friendUsername);
+      const querySnapshot = await getDocs(modulesQuery);
+      const userModulesData = [];
+
+      querySnapshot.forEach((doc) => {
+        const userData = doc.data();
+        const dayMap = userData.timetable;
+        Object.keys(dayMap).forEach((day) => {
+          const moduleCodeMap = dayMap[day];
+          Object.entries(moduleCodeMap).forEach(([moduleCode, timeslot]) => {
+            userModulesData.push([day, moduleCode, timeslot]);
+          });
+        });
+      });
+
+      setFriendModules(userModulesData);
+      console.log(friendModules);
+    } catch (err) {
+      console.log("Error fetching friend modules", err);
+    }
+  }
+
   useEffect(() => {
     fetchUserModules();
   }, [currentUsername]);
 
   return (
     <UserModulesContext.Provider
-      value={{ userModules, setUserModules, fetchUserModules }}
+      value={{
+        userModules,
+        setUserModules,
+        fetchUserModules,
+        friendModules,
+        setFriendModules,
+        fetchFriendModules,
+        currentFriend,
+      }}
     >
       {children}
     </UserModulesContext.Provider>
