@@ -4,6 +4,9 @@ import AddFriend from "../components/AddFriend";
 import { fireStoreDB } from "../config/firebase";
 import { useAuth } from "../context/AuthContext";
 import { auth } from "../config/firebase";
+import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   doc,
   getDoc,
@@ -14,12 +17,15 @@ import {
   where,
   deleteField,
 } from "firebase/firestore";
+import { useModuleContext } from "../context/UserModuleContext";
 
 const Friends = () => {
   const [friendRequests, setFriendRequests] = useState([]);
   const [friendsList, setFriendsList] = useState([]);
   const [refresh, setRefresh] = useState(false);
-  const { currentUsername } = useAuth();
+  const { currentUsername, currentUserId } = useAuth();
+  const { fetchFriendModules } = useModuleContext();
+  const navigate = useNavigate();
 
   const handleAcceptFriendRequest = async (friendUsername) => {
     const querySnapshot = await getDocs(
@@ -43,6 +49,17 @@ const Friends = () => {
       const friendDocRef = doc(fireStoreDB, "users", friendID);
       await updateDoc(friendDocRef, {
         [`friends.${auth.currentUser.uid}`]: currentUsername,
+      });
+
+      toast.success("Friend request accepted!", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
       });
 
       setRefresh((prevRefresh) => !prevRefresh);
@@ -69,11 +86,33 @@ const Friends = () => {
         [`friendRequests.${friendID}`]: deleteField(),
       });
 
+      toast.error("Friend request declined.", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
       setRefresh((prevRefresh) => !prevRefresh);
       setFriendRequests((prevRequests) =>
         prevRequests.filter((request) => request !== friendID)
       );
     }
+  };
+
+  const handleViewTimetable = async (friendUsername) => {
+    const querySnapshot = await getDocs(
+      query(
+        collection(fireStoreDB, "users"),
+        where("username", "==", friendUsername)
+      )
+    );
+    const friendID = querySnapshot.docs[0].id;
+    fetchFriendModules(friendUsername);
+    navigate(`/profile/${currentUserId}/friends/${friendID}`);
   };
 
   useEffect(() => {
@@ -105,6 +144,7 @@ const Friends = () => {
 
   return (
     <div className="container mx-auto p-8 font-mono">
+      <ToastContainer />
       <h1>
         <AddFriend />
       </h1>
@@ -137,9 +177,18 @@ const Friends = () => {
       </div>
       <h2 className="text-2xl font-bold mb-4">Friends List</h2>
       {friendsList.length > 0 ? (
-        friendsList.map((friendId) => (
-          <div key={friendId} className="bg-gray-200 rounded-md p-4 mb-4">
-            <span className="text-lg">{friendId}</span>
+        friendsList.map((friendUsername) => (
+          <div
+            key={friendUsername}
+            className="flex items-center justify-between bg-gray-200 rounded-md p-4 mb-4"
+          >
+            <span className="text-lg">{friendUsername}</span>
+            <button
+              className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+              onClick={() => handleViewTimetable(friendUsername)}
+            >
+              View Timetable
+            </button>
           </div>
         ))
       ) : (

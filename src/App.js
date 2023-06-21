@@ -12,6 +12,7 @@ import Profile from "./pages/Profile";
 import Navbar from "./components/Navbar";
 import Friends from "./pages/Friends";
 import Courses from "./pages/Courses";
+import FriendProfile from "./pages/FriendProfile";
 import { UserModulesProvider } from "./context/UserModuleContext";
 
 function App() {
@@ -50,6 +51,10 @@ function App() {
               <Route
                 path="/profile/:currentUserId"
                 element={<Profile />}
+              ></Route>
+              <Route
+                path="/profile/:currentUserId/friends/:friendUserId"
+                element={<FriendProfile />}
               ></Route>
               <Route
                 path="/profile/:currentUserId/friends"
