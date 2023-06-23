@@ -111,7 +111,7 @@ const Friends = () => {
       )
     );
     const friendID = querySnapshot.docs[0].id;
-    fetchFriendModules(friendUsername);
+    await fetchFriendModules(friendUsername);
     navigate(`/profile/${currentUserId}/friends/${friendID}`);
   };
 

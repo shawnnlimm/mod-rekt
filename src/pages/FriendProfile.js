@@ -4,6 +4,7 @@ import { useModuleContext } from "../context/UserModuleContext";
 
 const FriendProfile = () => {
   const { currentFriend } = useModuleContext();
+
   return (
     <div>
       <div className="text-center mt-20 text-4xl font-bold mb-4 font-mono">

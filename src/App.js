@@ -21,6 +21,7 @@ function App() {
 
   const toggle = () => {
     setIsOpen(!isOpen);
+    console.log("bp");
   };
 
   useEffect(() => {
