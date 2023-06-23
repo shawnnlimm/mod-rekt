@@ -21,7 +21,6 @@ const FriendTimetable = () => {
 
   useEffect(() => {
     setTimetableData(friendModules);
-    console.log("bp2");
   }, [friendModules]);
 
   return (

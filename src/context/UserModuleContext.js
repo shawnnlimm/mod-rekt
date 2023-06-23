@@ -68,8 +68,9 @@ export function UserModulesProvider({ children }) {
         });
       });
 
+      setCurrentFriend(friendUsername);
       setFriendModules(userModulesData);
-      console.log(friendModules);
+      console.log(currentFriend);
     } catch (err) {
       console.log("Error fetching friend modules", err);
     }
