@@ -13,6 +13,7 @@ import Navbar from "./components/Navbar";
 import Friends from "./pages/Friends";
 import Courses from "./pages/Courses";
 import FriendProfile from "./pages/FriendProfile";
+import Default from "./pages/Default";
 import { UserModulesProvider } from "./context/UserModuleContext";
 
 function App() {
@@ -38,12 +39,13 @@ function App() {
 
   return (
     <>
-      <Dropdown isOpen={isOpen} toggle={toggle} />
       <AuthProvider>
+        <Dropdown isOpen={isOpen} toggle={toggle} />
         <UserModulesProvider>
           <Navbar toggle={toggle} />
           <Routes>
-            <Route exact path="/" element={<Home />}></Route>
+            <Route path="/" element={<Default />} />
+            <Route exact path="/home" element={<Home />}></Route>
             <Route path="/signup" element={<Signup />}></Route>
             <Route path="/login" element={<Login />}></Route>
             <Route path="/about" element={<About />}></Route>
