@@ -103,6 +103,41 @@ const Friends = () => {
     }
   };
 
+  const handleDeleteFriend = async (friendUsername) => {
+    const querySnapshot = await getDocs(
+      query(
+        collection(fireStoreDB, "users"),
+        where("username", "==", friendUsername)
+      )
+    );
+    const friendID = querySnapshot.docs[0].id;
+    const userDocRef = doc(fireStoreDB, "users", auth.currentUser.uid);
+    const userDocSnapshot = await getDoc(userDocRef);
+    const friendDocRef = doc(fireStoreDB, "users", friendID);
+
+    if (userDocSnapshot.exists()) {
+      // Remove friend frok friends list
+      await updateDoc(userDocRef, {
+        [`friends.${friendID}`]: deleteField(),
+      });
+      await updateDoc(friendDocRef, {
+        [`friends.${auth.currentUser.uid}`]: deleteField(),
+      });
+
+      toast.error("Friend removed.", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+      setRefresh((prevRefresh) => !prevRefresh);
+    }
+  };
+
   const handleViewTimetable = async (friendUsername) => {
     const querySnapshot = await getDocs(
       query(
@@ -189,6 +224,12 @@ const Friends = () => {
             >
               View Timetable
             </button>
+            <button
+                className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
+                onClick={() => handleDeleteFriend(friendUsername)}
+              >
+                Remove Friend
+              </button>
           </div>
         ))
       ) : (
