@@ -11,7 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 const Courses = () => {
   const [search, setSearch] = useState("");
   const { currentUserId } = useAuth();
-  const { fetchUserModules } = useModuleContext();
+  const { fetchUserModules, userModules } = useModuleContext();
 
   const handleAdd = async (course) => {
     try {
@@ -23,32 +23,19 @@ const Courses = () => {
       const userDocSnapshot = await getDoc(userDocRef);
       const userDayMap = userDocSnapshot.data().timetable;
 
-      if (courseId + " " + type in userDayMap[day]) {
-        toast.error("Course already added", {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        });
-      } else {
-        userDayMap[day][courseId + " " + type] = timeslot;
-        await setDoc(userDocRef, { timetable: userDayMap }, { merge: true });
-        toast.success("Course added successfully!", {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        });
-        fetchUserModules();
-      }
+      userDayMap[day][courseId + " " + type] = timeslot;
+      await setDoc(userDocRef, { timetable: userDayMap }, { merge: true });
+      toast.success("Course added successfully!", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+      fetchUserModules();
     } catch (err) {
       console.log("Error adding course to fireStoreDb", err);
     }
@@ -64,21 +51,7 @@ const Courses = () => {
       const userDocSnapshot = await getDoc(userDocRef);
       const userDayMap = { ...userDocSnapshot.data() };
 
-      if (
-        !(courseId + " " + type in userDayMap.timetable[day]) ||
-        userDayMap.timetable[day][courseId + " " + type] !== timeslot
-      ) {
-        toast.error("Course already removed", {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        });
-      } else {
+      if (userDayMap.timetable[day][courseId + " " + type] === timeslot) {
         delete userDayMap.timetable[day][courseId + " " + type];
         await setDoc(userDocRef, userDayMap);
         toast.success("Course removed successfully!", {
@@ -97,6 +70,24 @@ const Courses = () => {
       console.log("Error removing course from fireStoreDb", err);
     }
   };
+
+  function isCourseAdded(course) {
+    const day = course.day;
+    const courseId = course.courseId;
+    const timeslot = course.timeslot;
+    const type = course.type;
+    for (let i = 0; i < userModules.length; i++) {
+      const [userDay, userModuleCodeAndType, userTimeslot] = userModules[i];
+      if (
+        day === userDay &&
+        courseId + " " + type === userModuleCodeAndType &&
+        timeslot === userTimeslot
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   return (
     <div className="mt-20">
@@ -135,22 +126,23 @@ const Courses = () => {
                   <td>{course.timeslot}</td>
                   <td>{course.type}</td>
                   <td>
-                    <button
-                      className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
-                      type="button"
-                      onClick={() => handleAdd(course)}
-                    >
-                      Add
-                    </button>
-                  </td>
-                  <td>
-                    <button
-                      className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
-                      type="button"
-                      onClick={() => handleRemove(course)}
-                    >
-                      Remove
-                    </button>
+                    {isCourseAdded(course) ? (
+                      <button
+                        className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+                        type="button"
+                        onClick={() => handleRemove(course)}
+                      >
+                        Remove
+                      </button>
+                    ) : (
+                      <button
+                        className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+                        type="button"
+                        onClick={() => handleAdd(course)}
+                      >
+                        Add
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

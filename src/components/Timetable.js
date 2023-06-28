@@ -58,7 +58,7 @@ const Timetable = () => {
                       if (
                         event[0] === day &&
                         timeSlot >= eventStartTime &&
-                        timeSlot <= eventEndTime
+                        timeSlot < eventEndTime
                       ) {
                         return <div key={`${event[1]}`}>{event[1]}</div>;
                       }
