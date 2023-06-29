@@ -1,8 +1,15 @@
 import React from "react";
-import { useState } from "react";
-import { courseData } from "../data/CourseData";
+import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  query,
+  collection,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import { fireStoreDB } from "../config/firebase";
 import { useModuleContext } from "../context/UserModuleContext";
 import { ToastContainer, toast } from "react-toastify";
@@ -12,6 +19,13 @@ const Courses = () => {
   const [search, setSearch] = useState("");
   const { currentUserId } = useAuth();
   const { fetchUserModules, userModules } = useModuleContext();
+  const [courseData, setCourseData] = useState([]);
+
+  async function getCourseData() {
+    const courseCollectionRef = collection(fireStoreDB, "courses");
+    const querySnapshot = await getDocs(courseCollectionRef);
+    setCourseData(querySnapshot.docs.map((doc) => doc.data()));
+  }
 
   const handleAdd = async (course) => {
     try {
@@ -25,6 +39,37 @@ const Courses = () => {
 
       userDayMap[day][courseId + " " + type] = timeslot;
       await setDoc(userDocRef, { timetable: userDayMap }, { merge: true });
+
+      for (let i = 0; i < courseData.length; i++) {
+        if (
+          courseData[i].courseId === courseId &&
+          courseData[i].day === day &&
+          courseData[i].timeslot === timeslot &&
+          courseData[i].type === type
+        ) {
+          const querySnapshot = await getDocs(
+            query(
+              collection(fireStoreDB, "courses"),
+              where("courseId", "==", courseId),
+              where("day", "==", day),
+              where("timeslot", "==", timeslot),
+              where("type", "==", type)
+            )
+          );
+          const courseUniqueId = querySnapshot.docs[0].id;
+          const courseDocRef = doc(fireStoreDB, "courses", courseUniqueId);
+          const courseDocSnapshot = await getDoc(courseDocRef);
+          const courseInfo = courseDocSnapshot.data();
+          await setDoc(
+            courseDocRef,
+            { numOfStudents: courseInfo.numOfStudents + 1 },
+            { merge: true }
+          );
+        }
+      }
+
+      getCourseData();
+
       toast.success("Course added successfully!", {
         position: "top-center",
         autoClose: 5000,
@@ -54,6 +99,37 @@ const Courses = () => {
       if (userDayMap.timetable[day][courseId + " " + type] === timeslot) {
         delete userDayMap.timetable[day][courseId + " " + type];
         await setDoc(userDocRef, userDayMap);
+
+        for (let i = 0; i < courseData.length; i++) {
+          if (
+            courseData[i].courseId === courseId &&
+            courseData[i].day === day &&
+            courseData[i].timeslot === timeslot &&
+            courseData[i].type === type
+          ) {
+            const querySnapshot = await getDocs(
+              query(
+                collection(fireStoreDB, "courses"),
+                where("courseId", "==", courseId),
+                where("day", "==", day),
+                where("timeslot", "==", timeslot),
+                where("type", "==", type)
+              )
+            );
+            const courseUniqueId = querySnapshot.docs[0].id;
+            const courseDocRef = doc(fireStoreDB, "courses", courseUniqueId);
+            const courseDocSnapshot = await getDoc(courseDocRef);
+            const courseInfo = courseDocSnapshot.data();
+            await setDoc(
+              courseDocRef,
+              { numOfStudents: courseInfo.numOfStudents - 1 },
+              { merge: true }
+            );
+          }
+        }
+
+        getCourseData();
+
         toast.success("Course removed successfully!", {
           position: "top-center",
           autoClose: 5000,
@@ -89,6 +165,10 @@ const Courses = () => {
     return false;
   }
 
+  useEffect(() => {
+    getCourseData();
+  }, [setCourseData]);
+
   return (
     <div className="mt-20">
       <ToastContainer />
@@ -110,6 +190,7 @@ const Courses = () => {
               <th>Day</th>
               <th>Timeslot</th>
               <th>Type</th>
+              <th>Students Selected</th>
             </tr>
           </thead>
           <tbody className="text-center">
@@ -125,6 +206,7 @@ const Courses = () => {
                   <td>{course.day}</td>
                   <td>{course.timeslot}</td>
                   <td>{course.type}</td>
+                  <td>{course.numOfStudents}</td>
                   <td>
                     {isCourseAdded(course) ? (
                       <button
