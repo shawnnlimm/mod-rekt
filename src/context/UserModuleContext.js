@@ -17,8 +17,9 @@ export function UserModulesProvider({ children }) {
 
   /* 
     userModules contains an array of array, where the array at 
-    each index consist of [day, moduleCode, timeslot]
+    each index consist of [day, moduleCode, timeslot]. eg. [Monday, GEA1000 Lecture, 1200 - 1500]
   */
+
   async function fetchUserModules() {
     const modulesQuery = query(
       collection(fireStoreDB, "users"),
@@ -70,7 +71,6 @@ export function UserModulesProvider({ children }) {
 
       setCurrentFriend(friendUsername);
       setFriendModules(userModulesData);
-      console.log(currentFriend);
     } catch (err) {
       console.log("Error fetching friend modules", err);
     }
