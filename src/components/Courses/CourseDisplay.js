@@ -12,11 +12,14 @@ import {
 import { fireStoreDB } from "../../config/firebase";
 import { useModuleContext } from "../../context/UserModuleContext";
 import { toast } from "react-toastify";
+import Pagination from "./Pagination";
 
 const CourseDisplay = ({ search }) => {
   const [courseData, setCourseData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const { currentUserId } = useAuth();
   const { fetchUserModules, userModules } = useModuleContext();
+  const coursesPerPage = 10;
 
   async function getCourseData() {
     const courseCollectionRef = collection(fireStoreDB, "courses");
@@ -166,57 +169,73 @@ const CourseDisplay = ({ search }) => {
     getCourseData();
   }, [setCourseData]);
 
+  const indexOfLastCourse = currentPage * coursesPerPage;
+  const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
+  const currentCourses = courseData.slice(
+    indexOfFirstCourse,
+    indexOfLastCourse
+  );
+
+  const paginate = (pageNum) => setCurrentPage(pageNum);
+
   return (
-    <div className="flex justify-center font-mono">
-      <table className="w-1/3">
-        <thead>
-          <tr className="text-lg">
-            <th>CourseId</th>
-            <th>Day</th>
-            <th>Timeslot</th>
-            <th>Type</th>
-            <th>Students Selected</th>
-          </tr>
-        </thead>
-        <tbody className="text-center">
-          {courseData
-            .filter((course) => {
-              const searchLower = search.toLowerCase();
-              const courseIdLower = course.courseId.toLowerCase();
-              return searchLower === ""
-                ? course
-                : courseIdLower.includes(searchLower);
-            })
-            .map((course) => (
-              <tr key={course.courseId}>
-                <td>{course.courseId}</td>
-                <td>{course.day}</td>
-                <td>{course.timeslot}</td>
-                <td>{course.type}</td>
-                <td>{course.numOfStudents}</td>
-                <td>
-                  {isCourseAdded(course) ? (
-                    <button
-                      className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
-                      type="button"
-                      onClick={() => handleRemove(course)}
-                    >
-                      Remove
-                    </button>
-                  ) : (
-                    <button
-                      className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
-                      type="button"
-                      onClick={() => handleAdd(course)}
-                    >
-                      Add
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
-        </tbody>
-      </table>
+    <div>
+      <div className="flex justify-center font-mono">
+        <table className="w-1/3">
+          <thead>
+            <tr className="text-lg">
+              <th>CourseId</th>
+              <th>Day</th>
+              <th>Timeslot</th>
+              <th>Type</th>
+              <th>Students Selected</th>
+            </tr>
+          </thead>
+          <tbody className="text-center">
+            {currentCourses
+              .filter((course) => {
+                const searchLower = search.toLowerCase();
+                const courseIdLower = course.courseId.toLowerCase();
+                return searchLower === ""
+                  ? course
+                  : courseIdLower.includes(searchLower);
+              })
+              .map((course) => (
+                <tr key={course.courseId}>
+                  <td>{course.courseId}</td>
+                  <td>{course.day}</td>
+                  <td>{course.timeslot}</td>
+                  <td>{course.type}</td>
+                  <td>{course.numOfStudents}</td>
+                  <td>
+                    {isCourseAdded(course) ? (
+                      <button
+                        className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+                        type="button"
+                        onClick={() => handleRemove(course)}
+                      >
+                        Remove
+                      </button>
+                    ) : (
+                      <button
+                        className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+                        type="button"
+                        onClick={() => handleAdd(course)}
+                      >
+                        Add
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </div>
+      <Pagination
+        coursesPerPage={coursesPerPage}
+        totalCourses={courseData.length}
+        paginate={paginate}
+      />
     </div>
   );
 };

@@ -15,6 +15,7 @@ import Courses from "./pages/Courses";
 import FriendProfile from "./pages/FriendProfile";
 import Default from "./pages/Default";
 import { UserModulesProvider } from "./context/UserModuleContext";
+import ScrapeModules from "./ScrapeModules";
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
@@ -41,6 +42,7 @@ function App() {
   return (
     <>
       <AuthProvider>
+        <ScrapeModules />
         <Dropdown isOpen={isOpen} toggle={toggle} />
         <UserModulesProvider>
           <Navbar toggle={toggle} />
