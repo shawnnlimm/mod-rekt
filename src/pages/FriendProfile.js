@@ -1,5 +1,5 @@
 import React from "react";
-import FriendTimetable from "../components/FriendTimetable";
+import FriendTimetable from "../components/Friends/FriendTimetable";
 import { useModuleContext } from "../context/UserModuleContext";
 
 const FriendProfile = () => {

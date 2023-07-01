@@ -1,8 +1,6 @@
-import React from "react";
-import { useState } from "react";
-import { fireStoreDB } from "../config/firebase";
-import { auth } from "../config/firebase";
-import { useAuth } from "../context/AuthContext";
+import React, { useState } from "react";
+import { fireStoreDB, auth } from "../../config/firebase";
+import { useAuth } from "../../context/AuthContext";
 import {
   doc,
   getDoc,
