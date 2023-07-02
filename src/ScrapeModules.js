@@ -171,11 +171,11 @@ const ScrapeModules = () => {
 
   // Make a GET request to the API endpoint
 
-  return (
+  /*return (
     <div>
       <button onClick={getMods}>Get Mods</button>
     </div>
-  );
+  );*/
 };
 
 export default ScrapeModules;
