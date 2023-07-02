@@ -3,15 +3,13 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "@firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDzrS61BWPaR9h9koylQzJSFiT0keZETqY",
-  authDomain: "mod-rekt.firebaseapp.com",
-  databaseURL:
-    "https://mod-rekt-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "mod-rekt",
-  storageBucket: "mod-rekt.appspot.com",
-  messagingSenderId: "982004405037",
-  appId: "1:982004405037:web:0491106515065b9df5b9a4",
-  measurementId: "G-3K6T9KZCYQ",
+  apiKey: "AIzaSyA1z70S9jjyzBRFTyyTa6-0YBZWTL7r1Eg",
+  authDomain: "modrekt-c681f.firebaseapp.com",
+  projectId: "modrekt-c681f",
+  storageBucket: "modrekt-c681f.appspot.com",
+  messagingSenderId: "328709065549",
+  appId: "1:328709065549:web:145e8e78bb70c2b7c88504",
+  measurementId: "G-81TL7GEGY7",
 };
 
 const app = initializeApp(firebaseConfig);
