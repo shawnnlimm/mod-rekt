@@ -4,10 +4,9 @@ import {
   doc,
   getDoc,
   setDoc,
-  query,
   collection,
-  where,
   getDocs,
+  updateDoc
 } from "firebase/firestore";
 import { fireStoreDB } from "../../config/firebase";
 import { useModuleContext } from "../../context/UserModuleContext";
@@ -22,51 +21,44 @@ const CourseDisplay = ({ search }) => {
   const coursesPerPage = 10;
 
   async function getCourseData() {
-    const courseCollectionRef = collection(fireStoreDB, "courses");
-    const querySnapshot = await getDocs(courseCollectionRef);
-    setCourseData(querySnapshot.docs.map((doc) => doc.data()));
-  }
+    const courseDataStore = [];
+    const courseCollectionRef = collection(fireStoreDB, "courseInfo");
+    const courseDocSnapshot = await getDocs(courseCollectionRef);
+    const courseDataMap = courseDocSnapshot.docs[0].data().courseInfoMap;
+    Object.keys(courseDataMap).forEach((courseID) => {
+      const course = courseDataMap[courseID]
+      const courseCredits = course.courseCredits;
+      const timetableMap = course.timetable[0];
+      const day = timetableMap.day;
+      const startTime = timetableMap.startTime;
+      const endTime = timetableMap.endTime;
+      const lessonType = timetableMap.lessonType;
+      const numOfStudents = timetableMap.numOfStudents;
+      courseDataStore.push([courseID, courseCredits, day, startTime, endTime, lessonType, numOfStudents]);
+      });
+    setCourseData(courseDataStore);
+    };
 
   const handleAdd = async (course) => {
     try {
-      const day = course.day;
-      const courseId = course.courseId;
-      const timeslot = course.timeslot;
-      const type = course.type;
+      const day = course[2];
+      const courseId = course[0];
+      const startTime = course[3];
+      const endTime = course[4];
+      const type = course[5];
       const userDocRef = doc(fireStoreDB, "users", currentUserId);
       const userDocSnapshot = await getDoc(userDocRef);
       const userDayMap = userDocSnapshot.data().timetable;
 
-      userDayMap[day][courseId + " " + type] = timeslot;
+      userDayMap[day][courseId + " " + type] = startTime + " - " + endTime;
       await setDoc(userDocRef, { timetable: userDayMap }, { merge: true });
 
-      for (let i = 0; i < courseData.length; i++) {
-        if (
-          courseData[i].courseId === courseId &&
-          courseData[i].day === day &&
-          courseData[i].timeslot === timeslot &&
-          courseData[i].type === type
-        ) {
-          const querySnapshot = await getDocs(
-            query(
-              collection(fireStoreDB, "courses"),
-              where("courseId", "==", courseId),
-              where("day", "==", day),
-              where("timeslot", "==", timeslot),
-              where("type", "==", type)
-            )
-          );
-          const courseUniqueId = querySnapshot.docs[0].id;
-          const courseDocRef = doc(fireStoreDB, "courses", courseUniqueId);
-          const courseDocSnapshot = await getDoc(courseDocRef);
-          const courseInfo = courseDocSnapshot.data();
-          await setDoc(
-            courseDocRef,
-            { numOfStudents: courseInfo.numOfStudents + 1 },
-            { merge: true }
-          );
-        }
-      }
+      const courseCollectionRef = collection(fireStoreDB, "courseInfo");
+      const courseDocSnapshot = await getDocs(courseCollectionRef);
+      const docRef = courseDocSnapshot.docs[0].ref;
+      const courseInfoMap = courseDocSnapshot.docs[0].data().courseInfoMap;
+      courseInfoMap[courseId].timetable[0].numOfStudents += 1;
+      await updateDoc(docRef, { courseInfoMap });
 
       getCourseData();
 
@@ -88,45 +80,25 @@ const CourseDisplay = ({ search }) => {
 
   const handleRemove = async (course) => {
     try {
-      const day = course.day;
-      const courseId = course.courseId;
-      const timeslot = course.timeslot;
-      const type = course.type;
+      const day = course[2];
+      const courseId = course[0];
+      const startTime = course[3];
+      const endTime = course[4];
+      const type = course[5];
       const userDocRef = doc(fireStoreDB, "users", currentUserId);
       const userDocSnapshot = await getDoc(userDocRef);
       const userDayMap = { ...userDocSnapshot.data() };
 
-      if (userDayMap.timetable[day][courseId + " " + type] === timeslot) {
+      if (userDayMap.timetable[day][courseId + " " + type] === startTime + " - " + endTime) {
         delete userDayMap.timetable[day][courseId + " " + type];
         await setDoc(userDocRef, userDayMap);
 
-        for (let i = 0; i < courseData.length; i++) {
-          if (
-            courseData[i].courseId === courseId &&
-            courseData[i].day === day &&
-            courseData[i].timeslot === timeslot &&
-            courseData[i].type === type
-          ) {
-            const querySnapshot = await getDocs(
-              query(
-                collection(fireStoreDB, "courses"),
-                where("courseId", "==", courseId),
-                where("day", "==", day),
-                where("timeslot", "==", timeslot),
-                where("type", "==", type)
-              )
-            );
-            const courseUniqueId = querySnapshot.docs[0].id;
-            const courseDocRef = doc(fireStoreDB, "courses", courseUniqueId);
-            const courseDocSnapshot = await getDoc(courseDocRef);
-            const courseInfo = courseDocSnapshot.data();
-            await setDoc(
-              courseDocRef,
-              { numOfStudents: courseInfo.numOfStudents - 1 },
-              { merge: true }
-            );
-          }
-        }
+        const courseCollectionRef = collection(fireStoreDB, "courseInfo");
+        const courseDocSnapshot = await getDocs(courseCollectionRef);
+        const docRef = courseDocSnapshot.docs[0].ref;
+        const courseInfoMap = courseDocSnapshot.docs[0].data().courseInfoMap;
+        courseInfoMap[courseId].timetable[0].numOfStudents -= 1;
+        await updateDoc(docRef, { courseInfoMap });
 
         getCourseData();
 
@@ -148,16 +120,17 @@ const CourseDisplay = ({ search }) => {
   };
 
   function isCourseAdded(course) {
-    const day = course.day;
-    const courseId = course.courseId;
-    const timeslot = course.timeslot;
-    const type = course.type;
+    const day = course[2];
+    const courseId = course[0];
+    const startTime = course[3];
+    const endTime = course[4];
+    const type = course[5];
     for (let i = 0; i < userModules.length; i++) {
       const [userDay, userModuleCodeAndType, userTimeslot] = userModules[i];
       if (
         day === userDay &&
         courseId + " " + type === userModuleCodeAndType &&
-        timeslot === userTimeslot
+        startTime + " - " + endTime === userTimeslot
       ) {
         return true;
       }
@@ -171,10 +144,11 @@ const CourseDisplay = ({ search }) => {
 
   const indexOfLastCourse = currentPage * coursesPerPage;
   const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
-  const currentCourses = courseData.slice(
-    indexOfFirstCourse,
-    indexOfLastCourse
-  );
+  console.log(courseData);
+  // const currentCourses = courseData.slice(
+    // indexOfFirstCourse,
+    // indexOfLastCourse
+  // ); 
 
   const paginate = (pageNum) => setCurrentPage(pageNum);
 
@@ -192,21 +166,21 @@ const CourseDisplay = ({ search }) => {
             </tr>
           </thead>
           <tbody className="text-center">
-            {currentCourses
+            {courseData
               .filter((course) => {
                 const searchLower = search.toLowerCase();
-                const courseIdLower = course.courseId.toLowerCase();
+                const courseIdLower = course[0].toLowerCase();
                 return searchLower === ""
                   ? course
                   : courseIdLower.includes(searchLower);
               })
               .map((course) => (
-                <tr key={course.courseId}>
-                  <td>{course.courseId}</td>
-                  <td>{course.day}</td>
-                  <td>{course.timeslot}</td>
-                  <td>{course.type}</td>
-                  <td>{course.numOfStudents}</td>
+                <tr>
+                  <td>{course[0]}</td>
+                  <td>{course[2]}</td>
+                  <td>{course[3] + " - " + course[4]}</td>
+                  <td>{course[5]}</td>
+                  <td>{course[6]}</td>
                   <td>
                     {isCourseAdded(course) ? (
                       <button
