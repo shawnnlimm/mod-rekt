@@ -50,8 +50,9 @@ const CourseDisplay = ({ search }) => {
       const numOfStudents = timetableMap.numOfStudents;
       courseDataStore.push([courseID, courseCredits, day, startTime, endTime, lessonType, numOfStudents]);
       });
+    courseDataStore.sort((a, b) => a[0].localeCompare(b[0]))
     setCourseData(courseDataStore);
-    };
+  };
 
   const handleAdd = async (course) => {
     try {
