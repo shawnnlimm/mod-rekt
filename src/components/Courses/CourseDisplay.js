@@ -11,14 +11,28 @@ import {
 import { fireStoreDB } from "../../config/firebase";
 import { useModuleContext } from "../../context/UserModuleContext";
 import { toast } from "react-toastify";
-import Pagination from "./Pagination";
+import ReactPaginate from 'react-paginate';
 
 const CourseDisplay = ({ search }) => {
   const [courseData, setCourseData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const { currentUserId } = useAuth();
   const { fetchUserModules, userModules } = useModuleContext();
+  const [itemOffset, setItemOffset] = useState(0);
   const coursesPerPage = 10;
+  const endOffset = itemOffset + coursesPerPage;
+  const currentItems = courseData.slice(itemOffset, endOffset);
+  const pageCount = Math.ceil(courseData.filter((course) => {
+                                          const searchLower = search.toLowerCase();
+                                          const courseIdLower = course[0].toLowerCase();
+                                          return searchLower === ""
+                                            ? course
+                                            : courseIdLower.includes(searchLower);
+                                          }).length / coursesPerPage);
+
+  const handlePageClick = (event) => {
+    const newOffset = (event.selected * coursesPerPage) % courseData.length;
+    setItemOffset(newOffset);
+  };
 
   async function getCourseData() {
     const courseDataStore = [];
@@ -36,8 +50,9 @@ const CourseDisplay = ({ search }) => {
       const numOfStudents = timetableMap.numOfStudents;
       courseDataStore.push([courseID, courseCredits, day, startTime, endTime, lessonType, numOfStudents]);
       });
+    courseDataStore.sort((a, b) => a[0].localeCompare(b[0]))
     setCourseData(courseDataStore);
-    };
+  };
 
   const handleAdd = async (course) => {
     try {
@@ -142,20 +157,10 @@ const CourseDisplay = ({ search }) => {
     getCourseData();
   }, [setCourseData]);
 
-  const indexOfLastCourse = currentPage * coursesPerPage;
-  const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
-  console.log(courseData);
-  // const currentCourses = courseData.slice(
-    // indexOfFirstCourse,
-    // indexOfLastCourse
-  // ); 
-
-  const paginate = (pageNum) => setCurrentPage(pageNum);
-
   return (
     <div>
       <div className="flex justify-center font-mono">
-        <table className="w-1/3">
+        <table className="w-full">
           <thead>
             <tr className="text-lg">
               <th>CourseId</th>
@@ -166,7 +171,7 @@ const CourseDisplay = ({ search }) => {
             </tr>
           </thead>
           <tbody className="text-center">
-            {courseData
+            {currentItems
               .filter((course) => {
                 const searchLower = search.toLowerCase();
                 const courseIdLower = course[0].toLowerCase();
@@ -205,11 +210,19 @@ const CourseDisplay = ({ search }) => {
           </tbody>
         </table>
       </div>
-      <Pagination
-        coursesPerPage={coursesPerPage}
-        totalCourses={courseData.length}
-        paginate={paginate}
-      />
+      <div>
+        <ReactPaginate
+          breakLabel="..."
+          nextLabel="next >"
+          onPageChange={handlePageClick}
+          pageRangeDisplayed={5}
+          pageCount={pageCount}
+          previousLabel="< previous"
+          renderOnZeroPageCount={null}
+          containerClassName="flex justify-center"
+          pageLinkClassName="mx-2"
+        />
+      </div>
     </div>
   );
 };
