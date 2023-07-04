@@ -64,30 +64,58 @@ const CourseDisplay = ({ search }) => {
       const userDocRef = doc(fireStoreDB, "users", currentUserId);
       const userDocSnapshot = await getDoc(userDocRef);
       const userDayMap = userDocSnapshot.data().timetable;
+      const timetableDayData = userDayMap[day];
+      
+      function isScheduled(start, end) {
+        let isOverlap = false;
+        Object.values(timetableDayData).forEach((timeslot) => {
+          const startTime = timeslot.split(" - ")[0];
+          const endTime = timeslot.split(" - ")[1];
+          if (start >= startTime && start <= endTime) {
+            isOverlap = true;
+          } else if (end >= startTime && end <= endTime) {
+            isOverlap = true;
+          } 
+        })
+        return isOverlap;
+      }
 
-      userDayMap[day][courseId + " " + type] = startTime + " - " + endTime;
-      await setDoc(userDocRef, { timetable: userDayMap }, { merge: true });
+      if (isScheduled(startTime, endTime)) {
+        toast.error("There is already a course in that timeslot!", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      } else {
+        userDayMap[day][courseId + " " + type] = startTime + " - " + endTime;
+        await setDoc(userDocRef, { timetable: userDayMap }, { merge: true });
 
-      const courseCollectionRef = collection(fireStoreDB, "courseInfo");
-      const courseDocSnapshot = await getDocs(courseCollectionRef);
-      const docRef = courseDocSnapshot.docs[0].ref;
-      const courseInfoMap = courseDocSnapshot.docs[0].data().courseInfoMap;
-      courseInfoMap[courseId].timetable[0].numOfStudents += 1;
-      await updateDoc(docRef, { courseInfoMap });
+        const courseCollectionRef = collection(fireStoreDB, "courseInfo");
+        const courseDocSnapshot = await getDocs(courseCollectionRef);
+        const docRef = courseDocSnapshot.docs[0].ref;
+        const courseInfoMap = courseDocSnapshot.docs[0].data().courseInfoMap;
+        courseInfoMap[courseId].timetable[0].numOfStudents += 1;
+        await updateDoc(docRef, { courseInfoMap });
 
-      getCourseData();
+        getCourseData();
 
-      toast.success("Course added successfully!", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
-      fetchUserModules();
+        toast.success("Course added successfully!", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
+    fetchUserModules();
     } catch (err) {
       console.log("Error adding course to fireStoreDb", err);
     }
