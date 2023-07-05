@@ -20,7 +20,12 @@ const CourseDisplay = ({ search }) => {
   const [itemOffset, setItemOffset] = useState(0);
   const coursesPerPage = 10;
   const endOffset = itemOffset + coursesPerPage;
-  const currentItems = courseData.slice(itemOffset, endOffset);
+  const filteredItems = courseData.filter((course) => {
+    const searchLower = search.toLowerCase();
+    const courseIdLower = course[0].toLowerCase();
+    return searchLower === "" ? true : courseIdLower.includes(searchLower);
+  });
+  const currentItems = filteredItems.slice(itemOffset, endOffset);
   const pageCount = Math.ceil(courseData.filter((course) => {
                                           const searchLower = search.toLowerCase();
                                           const courseIdLower = course[0].toLowerCase();
@@ -247,8 +252,12 @@ const CourseDisplay = ({ search }) => {
           pageCount={pageCount}
           previousLabel="< previous"
           renderOnZeroPageCount={null}
-          containerClassName="flex justify-center"
-          pageLinkClassName="mx-2"
+          containerClassName="flex justify-center my-4"
+          pageLinkClassName="mx-2 px-3 py-2 bg-blue-300 hover:bg-blue-600 rounded-lg"
+          activeLinkClassName="bg-grey-200 text-white"
+          previousLinkClassName="mx-2 px-3 py-2 bg-blue-400 hover:bg-blue-600 rounded-lg"
+          nextLinkClassName="mx-2 px-3 py-2 bg-blue-400 hover:bg-blue-600 rounded-lg"
+          breakClassName="mx-2"
         />
       </div>
     </div>
