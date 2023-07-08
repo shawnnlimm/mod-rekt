@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function Signup() {
@@ -49,7 +49,6 @@ export default function Signup() {
 
   return (
     <div className="flex flex-col justify-center items-center h-screen">
-      <ToastContainer />
       <div className="bg-white rounded-md drop-shadow-xl p-4 max-w-md w-full">
         <h2 className="text-center mb-4 text-2xl">Sign Up</h2>
         {error && <div className="text-red-500">{error}</div>}

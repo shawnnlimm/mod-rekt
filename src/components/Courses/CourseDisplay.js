@@ -6,12 +6,12 @@ import {
   setDoc,
   collection,
   getDocs,
-  updateDoc
+  updateDoc,
 } from "firebase/firestore";
 import { fireStoreDB } from "../../config/firebase";
 import { useModuleContext } from "../../context/UserModuleContext";
 import { toast } from "react-toastify";
-import ReactPaginate from 'react-paginate';
+import ReactPaginate from "react-paginate";
 
 const CourseDisplay = ({ search }) => {
   const [courseData, setCourseData] = useState([]);
@@ -26,13 +26,13 @@ const CourseDisplay = ({ search }) => {
     return searchLower === "" ? true : courseIdLower.includes(searchLower);
   });
   const currentItems = filteredItems.slice(itemOffset, endOffset);
-  const pageCount = Math.ceil(courseData.filter((course) => {
-                                          const searchLower = search.toLowerCase();
-                                          const courseIdLower = course[0].toLowerCase();
-                                          return searchLower === ""
-                                            ? course
-                                            : courseIdLower.includes(searchLower);
-                                          }).length / coursesPerPage);
+  const pageCount = Math.ceil(
+    courseData.filter((course) => {
+      const searchLower = search.toLowerCase();
+      const courseIdLower = course[0].toLowerCase();
+      return searchLower === "" ? course : courseIdLower.includes(searchLower);
+    }).length / coursesPerPage
+  );
 
   const handlePageClick = (event) => {
     const newOffset = (event.selected * coursesPerPage) % courseData.length;
@@ -45,7 +45,7 @@ const CourseDisplay = ({ search }) => {
     const courseDocSnapshot = await getDocs(courseCollectionRef);
     const courseDataMap = courseDocSnapshot.docs[0].data().courseInfoMap;
     Object.keys(courseDataMap).forEach((courseID) => {
-      const course = courseDataMap[courseID]
+      const course = courseDataMap[courseID];
       const courseCredits = course.courseCredits;
       const timetableMap = course.timetable[0];
       const day = timetableMap.day;
@@ -53,11 +53,19 @@ const CourseDisplay = ({ search }) => {
       const endTime = timetableMap.endTime;
       const lessonType = timetableMap.lessonType;
       const numOfStudents = timetableMap.numOfStudents;
-      courseDataStore.push([courseID, courseCredits, day, startTime, endTime, lessonType, numOfStudents]);
-      });
-    courseDataStore.sort((a, b) => a[0].localeCompare(b[0]))
+      courseDataStore.push([
+        courseID,
+        courseCredits,
+        day,
+        startTime,
+        endTime,
+        lessonType,
+        numOfStudents,
+      ]);
+    });
+    courseDataStore.sort((a, b) => a[0].localeCompare(b[0]));
     setCourseData(courseDataStore);
-  };
+  }
 
   const handleAdd = async (course) => {
     try {
@@ -70,7 +78,7 @@ const CourseDisplay = ({ search }) => {
       const userDocSnapshot = await getDoc(userDocRef);
       const userDayMap = userDocSnapshot.data().timetable;
       const timetableDayData = userDayMap[day];
-      
+
       function isScheduled(start, end) {
         let isOverlap = false;
         Object.values(timetableDayData).forEach((timeslot) => {
@@ -80,8 +88,8 @@ const CourseDisplay = ({ search }) => {
             isOverlap = true;
           } else if (end >= startTime && end <= endTime) {
             isOverlap = true;
-          } 
-        })
+          }
+        });
         return isOverlap;
       }
 
@@ -120,7 +128,7 @@ const CourseDisplay = ({ search }) => {
           theme: "dark",
         });
       }
-    fetchUserModules();
+      fetchUserModules();
     } catch (err) {
       console.log("Error adding course to fireStoreDb", err);
     }
@@ -137,7 +145,10 @@ const CourseDisplay = ({ search }) => {
       const userDocSnapshot = await getDoc(userDocRef);
       const userDayMap = { ...userDocSnapshot.data() };
 
-      if (userDayMap.timetable[day][courseId + " " + type] === startTime + " - " + endTime) {
+      if (
+        userDayMap.timetable[day][courseId + " " + type] ===
+        startTime + " - " + endTime
+      ) {
         delete userDayMap.timetable[day][courseId + " " + type];
         await setDoc(userDocRef, userDayMap);
 

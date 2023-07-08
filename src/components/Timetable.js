@@ -15,6 +15,9 @@ const Timetable = () => {
     "1600",
     "1700",
     "1800",
+    "1900",
+    "2000",
+    "2100",
   ];
   const { userModules } = useModuleContext();
   const [timetableData, setTimetableData] = useState([]);

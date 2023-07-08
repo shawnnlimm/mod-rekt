@@ -16,7 +16,7 @@ import {
   where,
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const AuthContext = React.createContext();
@@ -146,7 +146,6 @@ export function AuthProvider({ children }) {
 
   return (
     <div>
-      <ToastContainer />
       <AuthContext.Provider value={value}>
         {!loading && children}
       </AuthContext.Provider>

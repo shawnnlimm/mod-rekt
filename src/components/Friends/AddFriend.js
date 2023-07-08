@@ -10,7 +10,7 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const AddFriend = () => {
@@ -102,7 +102,6 @@ const AddFriend = () => {
 
   return (
     <div className="flex justify-center space-x-4 my-10">
-      <ToastContainer />
       <input
         type="text"
         value={friendUsername}
