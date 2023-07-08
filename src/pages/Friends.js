@@ -4,7 +4,6 @@ import { doc, getDoc } from "firebase/firestore";
 import FriendRequests from "../components/Friends/FriendRequests";
 import FriendList from "../components/Friends/FriendList";
 import AddFriend from "../components/Friends/AddFriend";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Friends = () => {
@@ -41,7 +40,6 @@ const Friends = () => {
 
   return (
     <div className="container mx-auto p-8 font-mono">
-      <ToastContainer />
       <AddFriend />
       <FriendRequests
         friendRequests={friendRequests}

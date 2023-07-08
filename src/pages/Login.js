@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function Login() {
@@ -36,7 +36,6 @@ export default function Login() {
 
   return (
     <div className="flex flex-col justify-center items-center h-screen">
-      <ToastContainer />
       <div className="bg-white rounded-md drop-shadow-xl p-8 max-w-md w-full">
         <h2 className="text-center mb-4 text-2xl">Log In</h2>
         {error && <div className="text-red-500">{error}</div>}
