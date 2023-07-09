@@ -47,21 +47,23 @@ const CourseDisplay = ({ search }) => {
     Object.keys(courseDataMap).forEach((courseID) => {
       const course = courseDataMap[courseID];
       const courseCredits = course.courseCredits;
-      const timetableMap = course.timetable[0];
-      const day = timetableMap.day;
-      const startTime = timetableMap.startTime;
-      const endTime = timetableMap.endTime;
-      const lessonType = timetableMap.lessonType;
-      const numOfStudents = timetableMap.numOfStudents;
-      courseDataStore.push([
-        courseID,
-        courseCredits,
-        day,
-        startTime,
-        endTime,
-        lessonType,
-        numOfStudents,
-      ]);
+      const timetableArray = course.timetable;
+      for (let i = 0; i < timetableArray.length; i++) {
+        const day = timetableArray[i].day;
+        const startTime = timetableArray[i].startTime;
+        const endTime = timetableArray[i].endTime;
+        const lessonType = timetableArray[i].lessonType;
+        const numOfStudents = timetableArray[i].numOfStudents;
+        courseDataStore.push([
+          courseID,
+          courseCredits,
+          day,
+          startTime,
+          endTime,
+          lessonType,
+          numOfStudents,
+        ]);
+      }
     });
     courseDataStore.sort((a, b) => a[0].localeCompare(b[0]));
     setCourseData(courseDataStore);
@@ -207,7 +209,7 @@ const CourseDisplay = ({ search }) => {
         <table className="w-full">
           <thead>
             <tr className="text-lg">
-              <th>CourseId</th>
+              <th>Course Code</th>
               <th>Day</th>
               <th>Timeslot</th>
               <th>Type</th>
