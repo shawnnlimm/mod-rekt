@@ -28,15 +28,15 @@ const FriendList = ({ setRefresh, friendsList }) => {
         where("username", "==", friendUsername)
       )
     );
-    const friendID = querySnapshot.docs[0].id;
+    const friendId = querySnapshot.docs[0].id;
     const userDocRef = doc(fireStoreDB, "users", auth.currentUser.uid);
     const userDocSnapshot = await getDoc(userDocRef);
-    const friendDocRef = doc(fireStoreDB, "users", friendID);
+    const friendDocRef = doc(fireStoreDB, "users", friendId);
 
     if (userDocSnapshot.exists()) {
       // Remove friend frok friends list
       await updateDoc(userDocRef, {
-        [`friends.${friendID}`]: deleteField(),
+        [`friends.${friendId}`]: deleteField(),
       });
       await updateDoc(friendDocRef, {
         [`friends.${auth.currentUser.uid}`]: deleteField(),
@@ -63,9 +63,9 @@ const FriendList = ({ setRefresh, friendsList }) => {
         where("username", "==", friendUsername)
       )
     );
-    const friendID = querySnapshot.docs[0].id;
+    const friendId = querySnapshot.docs[0].id;
     await fetchFriendModules(friendUsername);
-    navigate(`/profile/${currentUserId}/friends/${friendID}`);
+    navigate(`/profile/${currentUserId}/friends/${friendId}`);
   };
   return (
     <div>
@@ -76,9 +76,9 @@ const FriendList = ({ setRefresh, friendsList }) => {
             key={friendUsername}
             className="flex items-center justify-between bg-gray-200 rounded-md p-4 mb-4"
           >
-            <span className="text-lg">{friendUsername}</span>
+            <span className="text-lg flex-grow">{friendUsername}</span>
             <button
-              className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+              className="bg-yellow-500 hover:bg-yellow-600 text-black py-2 px-4 rounded mr-2"
               onClick={() => handleViewTimetable(friendUsername)}
             >
               View Timetable

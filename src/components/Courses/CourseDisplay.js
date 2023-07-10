@@ -235,7 +235,7 @@ const CourseDisplay = ({ search }) => {
                   <td>
                     {isCourseAdded(course) ? (
                       <button
-                        className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+                        className="bg-yellow-500 hover:bg-yellow-600 text-black py-2 px-4 rounded"
                         type="button"
                         onClick={() => handleRemove(course)}
                       >
@@ -243,7 +243,7 @@ const CourseDisplay = ({ search }) => {
                       </button>
                     ) : (
                       <button
-                        className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+                        className="bg-yellow-500 hover:bg-yellow-600 text-black py-2 px-4 rounded"
                         type="button"
                         onClick={() => handleAdd(course)}
                       >
@@ -266,10 +266,10 @@ const CourseDisplay = ({ search }) => {
           previousLabel="< previous"
           renderOnZeroPageCount={null}
           containerClassName="flex justify-center my-4"
-          pageLinkClassName="mx-2 px-3 py-2 bg-blue-300 hover:bg-blue-600 rounded-lg"
+          pageLinkClassName="font-mono mx-2 px-3 py-2 bg-yellow-500 hover:bg-yellow-600 rounded-lg"
           activeLinkClassName="bg-grey-200 text-white"
-          previousLinkClassName="mx-2 px-3 py-2 bg-blue-400 hover:bg-blue-600 rounded-lg"
-          nextLinkClassName="mx-2 px-3 py-2 bg-blue-400 hover:bg-blue-600 rounded-lg"
+          previousLinkClassName="font-mono mx-2 px-3 py-2 bg-yellow-500 hover:bg-yellow-600 rounded-lg"
+          nextLinkClassName="font-mono mx-2 px-3 py-2 bg-yellow-500 hover:bg-yellow-600 rounded-lg"
           breakClassName="mx-2"
         />
       </div>
