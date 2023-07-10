@@ -23,7 +23,7 @@ const AddFriend = () => {
     setSearchError("");
   };
 
-  const handleAddFriend = async () => {
+  const handleSendFriendRequest = async () => {
     const querySnapshot = await getDocs(
       query(
         collection(fireStoreDB, "users"),
@@ -110,10 +110,10 @@ const AddFriend = () => {
         className="w-1/4 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500"
       />
       <button
-        onClick={handleAddFriend}
-        className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-500"
+        onClick={handleSendFriendRequest}
+        className="px-4 py-2 text-black bg-yellow-500 rounded hover:bg-yellow-600 focus:outline-none focus:ring focus:border-yellow-500"
       >
-        Add Friend
+        Send Friend Request
       </button>
     </div>
   );

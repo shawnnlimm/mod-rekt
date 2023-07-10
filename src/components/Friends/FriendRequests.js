@@ -100,11 +100,11 @@ const FriendRequests = ({ friendRequests, setFriendRequests, setRefresh }) => {
         friendRequests.map((requestId) => (
           <div
             key={requestId}
-            className="flex items-center justify-between bg-gray-200 rounded-md p-4 mb-4"
+            className="flex items-center justfy-between bg-gray-200 rounded-md p-4 mb-4"
           >
-            <span className="text-lg">{requestId}</span>
+            <span className="text-lg flex-grow">{requestId}</span>
             <button
-              className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded"
+              className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mr-2"
               onClick={() => handleAcceptFriendRequest(requestId)}
             >
               Accept
