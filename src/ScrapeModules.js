@@ -124,7 +124,7 @@ const ScrapeModules = () => {
     axios
       .get("https://api.nusmods.com/v2/2023-2024/moduleList.json")
       .then((response) => {
-        const moduleList = response.data.slice(0, 1000); // [0-1000, 1000-2000, 2000-3000, 3000-4000, 4000-5000, 5000-6000, 6000-7000]
+        const moduleList = response.data.slice(1000, 2000); // [0-1000 DONE, 1000-2000, 2000-3000, 3000-4000, 4000-5000, 5000-6000, 6000-7000]
 
         const moduleCodeList = [];
 
@@ -175,7 +175,7 @@ const ScrapeModules = () => {
     <div>
       <button onClick={getMods}>Get Mods</button>
     </div>
-  );*/
+  ); */
 };
 
 export default ScrapeModules;
