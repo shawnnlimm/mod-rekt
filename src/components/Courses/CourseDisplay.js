@@ -25,6 +25,7 @@ const CourseDisplay = ({ search }) => {
     const courseIdLower = course[0].toLowerCase();
     return searchLower === "" ? true : courseIdLower.includes(searchLower);
   });
+
   const currentItems = filteredItems.slice(itemOffset, endOffset);
   const pageCount = Math.ceil(
     courseData.filter((course) => {
@@ -54,6 +55,7 @@ const CourseDisplay = ({ search }) => {
         const endTime = timetableArray[i].endTime;
         const lessonType = timetableArray[i].lessonType;
         const numOfStudents = timetableArray[i].numOfStudents;
+        const classNo = timetableArray[i].classNo;
         courseDataStore.push([
           courseID,
           courseCredits,
@@ -61,21 +63,53 @@ const CourseDisplay = ({ search }) => {
           startTime,
           endTime,
           lessonType,
+          classNo,
           numOfStudents,
         ]);
       }
     });
-    courseDataStore.sort((a, b) => a[0].localeCompare(b[0]));
+    //courseDataStore.sort((a, b) => a[0].localeCompare(b[0]));
+    courseDataStore.sort((a, b) => {
+      const courseIdA = a[0];
+      const courseIdB = b[0];
+      const courseIdComparison = courseIdA.localeCompare(courseIdB);
+
+      if (courseIdComparison !== 0) {
+        return courseIdComparison;
+      }
+
+      const daysOfWeek = [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday",
+      ];
+      const dayA = a[2];
+      const dayB = b[2];
+      const dayComparison = daysOfWeek.indexOf(dayA) - daysOfWeek.indexOf(dayB);
+
+      if (dayComparison !== 0) {
+        return dayComparison;
+      }
+
+      const startTimeA = a[3];
+      const startTimeB = b[3];
+      return startTimeA - startTimeB;
+    });
     setCourseData(courseDataStore);
   }
 
   const handleAdd = async (course) => {
     try {
-      const day = course[2];
       const courseId = course[0];
+      const day = course[2];
       const startTime = course[3];
       const endTime = course[4];
       const type = course[5];
+      const classNo = course[6];
       const userDocRef = doc(fireStoreDB, "users", currentUserId);
       const userDocSnapshot = await getDoc(userDocRef);
       const userDayMap = userDocSnapshot.data().timetable;
@@ -107,14 +141,21 @@ const CourseDisplay = ({ search }) => {
           theme: "dark",
         });
       } else {
-        userDayMap[day][courseId + " " + type] = startTime + " - " + endTime;
+        userDayMap[day][courseId + " " + type] = [
+          startTime + " - " + endTime,
+          classNo,
+        ];
         await setDoc(userDocRef, { timetable: userDayMap }, { merge: true });
-
         const courseCollectionRef = collection(fireStoreDB, "courseInfo");
         const courseDocSnapshot = await getDocs(courseCollectionRef);
         const docRef = courseDocSnapshot.docs[0].ref;
         const courseInfoMap = courseDocSnapshot.docs[0].data().courseInfoMap;
-        courseInfoMap[courseId].timetable[0].numOfStudents += 1;
+        const courseTimetableArray = courseInfoMap[courseId].timetable;
+        for (let i = 0; i < courseTimetableArray.length; i++) {
+          if (courseTimetableArray[i].classNo === classNo) {
+            courseTimetableArray[i].numOfStudents += 1;
+          }
+        }
         await updateDoc(docRef, { courseInfoMap });
 
         getCourseData();
@@ -143,13 +184,15 @@ const CourseDisplay = ({ search }) => {
       const startTime = course[3];
       const endTime = course[4];
       const type = course[5];
+      const classNo = course[6];
       const userDocRef = doc(fireStoreDB, "users", currentUserId);
       const userDocSnapshot = await getDoc(userDocRef);
       const userDayMap = { ...userDocSnapshot.data() };
 
       if (
-        userDayMap.timetable[day][courseId + " " + type] ===
-        startTime + " - " + endTime
+        userDayMap.timetable[day][courseId + " " + type][0] ===
+          startTime + " - " + endTime &&
+        userDayMap.timetable[day][courseId + " " + type][1] === classNo
       ) {
         delete userDayMap.timetable[day][courseId + " " + type];
         await setDoc(userDocRef, userDayMap);
@@ -158,7 +201,12 @@ const CourseDisplay = ({ search }) => {
         const courseDocSnapshot = await getDocs(courseCollectionRef);
         const docRef = courseDocSnapshot.docs[0].ref;
         const courseInfoMap = courseDocSnapshot.docs[0].data().courseInfoMap;
-        courseInfoMap[courseId].timetable[0].numOfStudents -= 1;
+        const courseTimetableArray = courseInfoMap[courseId].timetable;
+        for (let i = 0; i < courseTimetableArray.length; i++) {
+          if (courseTimetableArray[i].classNo === classNo) {
+            courseTimetableArray[i].numOfStudents -= 1;
+          }
+        }
         await updateDoc(docRef, { courseInfoMap });
 
         getCourseData();
@@ -181,17 +229,20 @@ const CourseDisplay = ({ search }) => {
   };
 
   function isCourseAdded(course) {
-    const day = course[2];
     const courseId = course[0];
+    const day = course[2];
     const startTime = course[3];
     const endTime = course[4];
     const type = course[5];
+    const classNo = course[6];
     for (let i = 0; i < userModules.length; i++) {
-      const [userDay, userModuleCodeAndType, userTimeslot] = userModules[i];
+      const [userDay, userModuleCodeAndType, userTimeslot, classChosen] =
+        userModules[i];
       if (
         day === userDay &&
         courseId + " " + type === userModuleCodeAndType &&
-        startTime + " - " + endTime === userTimeslot
+        startTime + " - " + endTime === userTimeslot &&
+        classChosen === classNo
       ) {
         return true;
       }
@@ -213,6 +264,7 @@ const CourseDisplay = ({ search }) => {
               <th>Day</th>
               <th>Timeslot</th>
               <th>Type</th>
+              <th>Class</th>
               <th>Students Selected</th>
             </tr>
           </thead>
@@ -225,6 +277,7 @@ const CourseDisplay = ({ search }) => {
                   ? course
                   : courseIdLower.includes(searchLower);
               })
+
               .map((course) => (
                 <tr>
                   <td>{course[0]}</td>
@@ -232,6 +285,7 @@ const CourseDisplay = ({ search }) => {
                   <td>{course[3] + " - " + course[4]}</td>
                   <td>{course[5]}</td>
                   <td>{course[6]}</td>
+                  <td>{course[7]}</td>
                   <td>
                     {isCourseAdded(course) ? (
                       <button

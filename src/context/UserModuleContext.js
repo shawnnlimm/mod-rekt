@@ -35,8 +35,8 @@ export function UserModulesProvider({ children }) {
         const dayMap = userData.timetable;
         Object.keys(dayMap).forEach((day) => {
           const moduleCodeMap = dayMap[day];
-          Object.entries(moduleCodeMap).forEach(([moduleCode, timeslot]) => {
-            userModulesData.push([day, moduleCode, timeslot]);
+          Object.entries(moduleCodeMap).forEach(([moduleCode, array]) => {
+            userModulesData.push([day, moduleCode, array[0], array[1]]);
           });
         });
       });

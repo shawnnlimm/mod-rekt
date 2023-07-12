@@ -63,7 +63,11 @@ const Timetable = () => {
                         timeSlot >= eventStartTime &&
                         timeSlot < eventEndTime
                       ) {
-                        return <div key={`${event[1]}`}>{event[1]}</div>;
+                        return (
+                          <div key={`${event[1]}`}>
+                            {event[1]} {event[3]}
+                          </div>
+                        );
                       }
                       return null;
                     })}
