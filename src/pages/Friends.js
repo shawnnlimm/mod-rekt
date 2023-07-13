@@ -36,8 +36,8 @@ const Friends = () => {
 
     fetchFriendRequests();
     fetchFriendsList();
-  }, [refresh]);
-
+  }, [refresh]); 
+ 
   return (
     <div className="container mx-auto p-8 font-mono">
       <AddFriend />
