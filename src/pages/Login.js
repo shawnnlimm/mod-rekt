@@ -79,6 +79,12 @@ export default function Login() {
           Signup
         </Link>
       </div>
+      <div className="text-center mt-2">
+        Forgot Password?{" "}
+        <Link to="/forgetpassword" className="text-blue-500">
+          Click Here
+        </Link>
+      </div>
     </div>
   );
 }

@@ -17,6 +17,7 @@ import Default from "./pages/Default";
 import { UserModulesProvider } from "./context/UserModuleContext";
 import ScrapeModules from "./ScrapeModules";
 import { ToastContainer } from "react-toastify";
+import ForgetPassword from "./pages/ForgetPassword";
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
@@ -54,6 +55,7 @@ function App() {
             <Route path="/signup" element={<Signup />}></Route>
             <Route path="/login" element={<Login />}></Route>
             <Route path="/about" element={<About />}></Route>
+            <Route path="/forgetpassword" element={<ForgetPassword />}></Route>
             <Route element={<PrivateRoute />}>
               <Route
                 path="/profile/:currentUserId"
