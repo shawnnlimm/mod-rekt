@@ -35,13 +35,17 @@ const FriendTimetable = () => {
   ];
   const { friendModules } = useModuleContext();
   const [timetableData, setTimetableData] = useState([]);
-  const occupiedSlots =[];
+  const occupiedSlots = [];
 
   const getRowSpan = (moduleCode) => {
     let count = 0;
     timetableData.forEach((event) => {
       if (event[1] === moduleCode) {
-        count = Math.ceil((parseInt(event[2].split(" - ")[1], 10) - parseInt(event[2].split(" - ")[0], 10)) / 50);
+        count = Math.ceil(
+          (parseInt(event[2].split(" - ")[1], 10) -
+            parseInt(event[2].split(" - ")[0], 10)) /
+            50
+        );
       }
     });
     return count;
@@ -51,15 +55,15 @@ const FriendTimetable = () => {
     if (occupiedSlots.length === 0) {
       return false;
     }
-    for (let i = 0;i < occupiedSlots.length; i++) {
+    for (let i = 0; i < occupiedSlots.length; i++) {
       if (occupiedSlots[i][0] === day) {
         if (occupiedSlots[i][1].includes(timeSlot)) {
           return true;
         }
       }
-    } 
+    }
     return false;
-  }
+  };
 
   useEffect(() => {
     setTimetableData(friendModules);
@@ -91,10 +95,15 @@ const FriendTimetable = () => {
                 {daysOfWeek.map((day) => {
                   const moduleEvent = timetableData.find(
                     (event) =>
-                      event[0] === day && event[2].split(" - ")[0].includes(timeSlot)
+                      event[0] === day &&
+                      event[2].split(" - ")[0].includes(timeSlot)
                   );
                   if (moduleEvent) {
-                    const takenSlots = timeSlots.filter((slot) => slot >= moduleEvent[2].split(" - ")[0] && slot < moduleEvent[2].split(" - ")[1])
+                    const takenSlots = timeSlots.filter(
+                      (slot) =>
+                        slot >= moduleEvent[2].split(" - ")[0] &&
+                        slot < moduleEvent[2].split(" - ")[1]
+                    );
                     occupiedSlots.push([day, takenSlots]);
                     const rowspan = getRowSpan(moduleEvent[1]);
                     return (
@@ -103,7 +112,7 @@ const FriendTimetable = () => {
                         rowSpan={rowspan}
                         className="border border-gray-300 py-2 px-4 text-center hover:font-bold"
                       >
-                        {moduleEvent[1]}
+                        {moduleEvent[1]} {moduleEvent[3]}
                       </td>
                     );
                   } else if (slotIsTaken(occupiedSlots, day, timeSlot)) {
@@ -113,8 +122,7 @@ const FriendTimetable = () => {
                       <td
                         key={`${day}-${timeSlot}`}
                         className="border border-gray-300 py-2 px-4 text-center"
-                      >
-                      </td>
+                      ></td>
                     );
                   }
                 })}
