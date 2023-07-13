@@ -5,22 +5,61 @@ const Timetable = () => {
   const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
   const timeSlots = [
     "0800",
+    "0830",
     "0900",
+    "0930",
     "1000",
+    "1030",
     "1100",
+    "1130",
     "1200",
+    "1230",
     "1300",
+    "1330",
     "1400",
+    "1430",
     "1500",
+    "1530",
     "1600",
+    "1630",
     "1700",
+    "1730",
     "1800",
+    "1830",
     "1900",
+    "1930",
     "2000",
+    "2030",
     "2100",
+    "2130",
   ];
   const { userModules } = useModuleContext();
   const [timetableData, setTimetableData] = useState([]);
+  const occupiedSlots =[];
+
+  const getRowSpan = (moduleCode) => {
+    let count = 0;
+    timetableData.forEach((event) => {
+      if (event[1] === moduleCode) {
+        count = Math.ceil((parseInt(event[2].split(" - ")[1], 10) - parseInt(event[2].split(" - ")[0], 10)) / 50);
+      }
+    });
+    return count;
+  };
+
+  const slotIsTaken = (occupiedSlots, day, timeSlot) => {
+    if (occupiedSlots.length === 0) {
+      return false;
+    }
+    for (let i = 0;i < occupiedSlots.length; i++) {
+      if (occupiedSlots[i][0] === day) {
+        if (occupiedSlots[i][1].includes(timeSlot)) {
+          return true;
+        }
+      }
+    } 
+    return false;
+  }
 
   useEffect(() => {
     setTimetableData(userModules);
@@ -49,30 +88,36 @@ const Timetable = () => {
                 <td className="border border-gray-300 py-4 px-4 text-center">
                   {timeSlot}
                 </td>
-                {daysOfWeek.map((day) => (
-                  <td
-                    key={day}
-                    className="border border-gray-300 py-2 px-4 text-center"
-                  >
-                    {/* Render module events here */}
-                    {timetableData.map((event) => {
-                      const eventStartTime = event[2].split(" - ")[0]; // Extract the start time from the duration
-                      const eventEndTime = event[2].split(" - ")[1]; // Extract the end time from the duration
-                      if (
-                        event[0] === day &&
-                        timeSlot >= eventStartTime &&
-                        timeSlot < eventEndTime
-                      ) {
-                        return (
-                          <div key={`${event[1]}`}>
-                            {event[1]} {event[3]}
-                          </div>
-                        );
-                      }
-                      return null;
-                    })}
-                  </td>
-                ))}
+                {daysOfWeek.map((day) => {
+                  const moduleEvent = timetableData.find(
+                    (event) =>
+                      event[0] === day && event[2].split(" - ")[0].includes(timeSlot)
+                  );
+                  if (moduleEvent) {
+                    const takenSlots = timeSlots.filter((slot) => slot >= moduleEvent[2].split(" - ")[0] && slot < moduleEvent[2].split(" - ")[1])
+                    occupiedSlots.push([day, takenSlots]);
+                    const rowspan = getRowSpan(moduleEvent[1]);
+                    return (
+                      <td
+                        key={`${day}-${timeSlot}`}
+                        rowSpan={rowspan}
+                        className="border border-gray-300 py-2 px-4 text-center hover:font-bold"
+                      >
+                        {moduleEvent[1]}
+                      </td>
+                    );
+                  } else if (slotIsTaken(occupiedSlots, day, timeSlot)) {
+                    return null;
+                  } else {
+                    return (
+                      <td
+                        key={`${day}-${timeSlot}`}
+                        className="border border-gray-300 py-2 px-4 text-center"
+                      >
+                      </td>
+                    );
+                  }
+                })}
               </tr>
             ))}
           </tbody>
