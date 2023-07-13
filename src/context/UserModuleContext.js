@@ -13,7 +13,6 @@ export function UserModulesProvider({ children }) {
   const [userModules, setUserModules] = useState([]);
   const [friendModules, setFriendModules] = useState([]);
   const { currentUsername } = useAuth();
-  const [currentFriend, setCurrentFriend] = useState("");
 
   /* 
     userModules contains an array of array, where the array at 
@@ -36,6 +35,7 @@ export function UserModulesProvider({ children }) {
         Object.keys(dayMap).forEach((day) => {
           const moduleCodeMap = dayMap[day];
           Object.entries(moduleCodeMap).forEach(([moduleCode, array]) => {
+            // array consists of [timeslot, classNo]
             userModulesData.push([day, moduleCode, array[0], array[1]]);
           });
         });
@@ -54,7 +54,6 @@ export function UserModulesProvider({ children }) {
     );
 
     try {
-      setCurrentFriend(friendUsername);
       const querySnapshot = await getDocs(modulesQuery);
       const userModulesData = [];
 
@@ -63,13 +62,13 @@ export function UserModulesProvider({ children }) {
         const dayMap = userData.timetable;
         Object.keys(dayMap).forEach((day) => {
           const moduleCodeMap = dayMap[day];
-          Object.entries(moduleCodeMap).forEach(([moduleCode, timeslot]) => {
-            userModulesData.push([day, moduleCode, timeslot]);
+          Object.entries(moduleCodeMap).forEach(([moduleCode, array]) => {
+            userModulesData.push([day, moduleCode, array[0], array[1]]);
           });
         });
       });
 
-      setCurrentFriend(friendUsername);
+      localStorage.setItem("currentFriend", friendUsername);
       setFriendModules(userModulesData);
     } catch (err) {
       console.log("Error fetching friend modules", err);
@@ -78,6 +77,7 @@ export function UserModulesProvider({ children }) {
 
   useEffect(() => {
     fetchUserModules();
+    fetchFriendModules(localStorage.getItem("currentFriend"));
   }, [currentUsername]);
 
   return (
@@ -89,7 +89,6 @@ export function UserModulesProvider({ children }) {
         friendModules,
         setFriendModules,
         fetchFriendModules,
-        currentFriend,
       }}
     >
       {children}

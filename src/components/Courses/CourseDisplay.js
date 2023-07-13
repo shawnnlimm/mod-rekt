@@ -68,7 +68,6 @@ const CourseDisplay = ({ search }) => {
         ]);
       }
     });
-    //courseDataStore.sort((a, b) => a[0].localeCompare(b[0]));
     courseDataStore.sort((a, b) => {
       const courseIdA = a[0];
       const courseIdB = b[0];
@@ -97,7 +96,15 @@ const CourseDisplay = ({ search }) => {
 
       const startTimeA = a[3];
       const startTimeB = b[3];
-      return startTimeA - startTimeB;
+      const startTimeComparison = startTimeA - startTimeB;
+
+      if (startTimeComparison !== 0) {
+        return startTimeA - startTimeB;
+      }
+
+      const classNoA = a[6];
+      const classNoB = b[6];
+      return classNoA.localeCompare(classNoB);
     });
     setCourseData(courseDataStore);
   }
@@ -179,8 +186,8 @@ const CourseDisplay = ({ search }) => {
 
   const handleRemove = async (course) => {
     try {
-      const day = course[2];
       const courseId = course[0];
+      const day = course[2];
       const startTime = course[3];
       const endTime = course[4];
       const type = course[5];
