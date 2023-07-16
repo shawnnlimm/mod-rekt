@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/Authentication/AuthContext";
 
 const Dropdown = ({ isOpen, toggle }) => {
   const { isLoggedIn, currentUserId, logout } = useAuth();

@@ -1,6 +1,6 @@
 import React from "react";
 import { fireStoreDB, auth } from "../../config/firebase";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/Authentication/AuthContext";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {

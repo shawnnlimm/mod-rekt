@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { fireStoreDB, auth } from "../../config/firebase";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/Authentication/AuthContext";
 import {
   doc,
   getDoc,

@@ -1,12 +1,12 @@
 import React, { useContext, useState, useEffect } from "react";
-import { auth } from "../config/firebase";
+import { auth } from "../../config/firebase";
 import {
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
-import { fireStoreDB } from "../config/firebase";
+import { fireStoreDB } from "../../config/firebase";
 import {
   collection,
   getDoc,
@@ -31,6 +31,7 @@ export function AuthProvider({ children }) {
   const [currentUsername, setCurrentUsername] = useState("");
   const [currentUserId, setCurrentUserId] = useState("");
   const [loading, setLoading] = useState(true);
+  const [isNewUser, setIsNewUser] = useState(false);
   const navigate = useNavigate();
 
   async function checkUsernameExists(username) {
@@ -57,9 +58,10 @@ export function AuthProvider({ children }) {
           theme: "dark",
         }
       );
-      return;
+      return false;
     }
 
+    setIsNewUser(true);
     const userCredential = await createUserWithEmailAndPassword(
       auth,
       email,
@@ -91,9 +93,11 @@ export function AuthProvider({ children }) {
       progress: undefined,
       theme: "dark",
     });
+    return true;
   }
 
   async function login(email, password) {
+    setIsNewUser(false);
     const userCredential = await signInWithEmailAndPassword(
       auth,
       email,
@@ -126,9 +130,12 @@ export function AuthProvider({ children }) {
         const userDoc = doc(fireStoreDB, "users", user.uid);
         const docSnapshot = await getDoc(userDoc);
         const userData = docSnapshot.data();
-        setCurrentUsername(userData.username);
-        setCurrentUserId(user.uid);
-        setIsLoggedIn(true);
+
+        if (!isNewUser) {
+          setCurrentUsername(userData.username);
+          setCurrentUserId(user.uid);
+          setIsLoggedIn(true);
+        }
       } else {
         setCurrentUsername("");
         setCurrentUserId("");

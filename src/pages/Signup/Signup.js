@@ -1,25 +1,39 @@
 import React, { useRef, useState } from "react";
-import { useAuth } from "../context/AuthContext";
-import { Link } from "react-router-dom";
+import { useAuth } from "../../context/Authentication/AuthContext";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export default function Login() {
+const Signup = () => {
+  const usernameRef = useRef();
   const emailRef = useRef();
   const passwordRef = useRef();
-  const { login } = useAuth();
+  const passwordConfirmRef = useRef();
+  const { signup } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   async function handleSubmit(e) {
     e.preventDefault();
 
+    if (passwordRef.current.value !== passwordConfirmRef.current.value) {
+      return setError("Passwords do not match");
+    }
+
     try {
       setError("");
       setLoading(true);
-      await login(emailRef.current.value, passwordRef.current.value);
+      const result = await signup(
+        usernameRef.current.value,
+        emailRef.current.value,
+        passwordRef.current.value
+      );
+
+      if (result) {
+        navigate("/login");
+      }
     } catch (err) {
-      setError("Failed to sign in");
       toast.error("Error: " + err.code, {
         position: "top-center",
         autoClose: 5000,
@@ -30,21 +44,37 @@ export default function Login() {
         progress: undefined,
         theme: "dark",
       });
-      setLoading(false);
+      setError("Failed to create an account");
     }
+
+    setLoading(false);
   }
 
   return (
     <div className="flex flex-col justify-center items-center h-screen">
-      <div className="bg-white rounded-md drop-shadow-xl p-8 max-w-md w-full">
-        <h2 className="text-center mb-4 text-2xl">Log In</h2>
+      <div className="bg-white rounded-md drop-shadow-xl p-4 max-w-md w-full">
+        <h2 className="text-center mb-4 text-2xl">Sign Up</h2>
         {error && <div className="text-red-500">{error}</div>}
         <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label htmlFor="email" className="block mb-2">
+              Username
+            </label>
+            <input
+              data-testid="username-input"
+              id="username"
+              type="text"
+              className="border border-gray-300 rounded px-3 py-2 w-full"
+              ref={usernameRef}
+              required
+            />
+          </div>
           <div className="mb-4">
             <label htmlFor="email" className="block mb-2">
               Email
             </label>
             <input
+              data-testid="email-input"
               id="email"
               type="email"
               className="border border-gray-300 rounded px-3 py-2 w-full"
@@ -57,10 +87,24 @@ export default function Login() {
               Password
             </label>
             <input
+              data-testid="password-input"
               id="password"
               type="password"
               className="border border-gray-300 rounded px-3 py-2 w-full"
               ref={passwordRef}
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="password-confirm" className="block mb-2">
+              Confirm Password
+            </label>
+            <input
+              data-testid="password-confirm-input"
+              id="password-confirm"
+              type="password"
+              className="border border-gray-300 rounded px-3 py-2 w-full"
+              ref={passwordConfirmRef}
               required
             />
           </div>
@@ -69,22 +113,18 @@ export default function Login() {
             className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded w-full"
             type="submit"
           >
-            Log In
+            Sign Up
           </button>
         </form>
       </div>
       <div className="text-center mt-2">
-        Need an account?{" "}
-        <Link to="/signup" className="text-blue-500">
-          Signup
-        </Link>
-      </div>
-      <div className="text-center mt-2">
-        Forgot Password?{" "}
-        <Link to="/forgetpassword" className="text-blue-500">
-          Click Here
+        Already have an account?{" "}
+        <Link to="/login" className="text-blue-500">
+          Log In
         </Link>
       </div>
     </div>
   );
-}
+};
+
+export default Signup;

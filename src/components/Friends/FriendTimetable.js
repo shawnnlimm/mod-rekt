@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useModuleContext } from "../../context/UserModuleContext";
+import { useModuleContext } from "../../context/UserModules/UserModuleContext";
 
 const FriendTimetable = () => {
   const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
