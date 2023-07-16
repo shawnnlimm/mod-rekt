@@ -125,8 +125,8 @@ const CourseDisplay = ({ search }) => {
       function isScheduled(start, end) {
         let isOverlap = false;
         Object.values(timetableDayData).forEach((timeslot) => {
-          const startTime = timeslot.split(" - ")[0];
-          const endTime = timeslot.split(" - ")[1];
+          const startTime = timeslot[0].split(" - ")[0];
+          const endTime = timeslot[0].split(" - ")[1];
           if (start >= startTime && start <= endTime) {
             isOverlap = true;
           } else if (end >= startTime && end <= endTime) {
@@ -159,7 +159,11 @@ const CourseDisplay = ({ search }) => {
         const courseInfoMap = courseDocSnapshot.docs[0].data().courseInfoMap;
         const courseTimetableArray = courseInfoMap[courseId].timetable;
         for (let i = 0; i < courseTimetableArray.length; i++) {
-          if (courseTimetableArray[i].classNo === classNo) {
+          if (
+            courseTimetableArray[i].classNo === classNo &&
+            courseTimetableArray[i].startTime === startTime &&
+            courseTimetableArray[i].endTime === endTime
+          ) {
             courseTimetableArray[i].numOfStudents += 1;
           }
         }
@@ -210,7 +214,11 @@ const CourseDisplay = ({ search }) => {
         const courseInfoMap = courseDocSnapshot.docs[0].data().courseInfoMap;
         const courseTimetableArray = courseInfoMap[courseId].timetable;
         for (let i = 0; i < courseTimetableArray.length; i++) {
-          if (courseTimetableArray[i].classNo === classNo) {
+          if (
+            courseTimetableArray[i].classNo === classNo &&
+            courseTimetableArray[i].startTime === startTime &&
+            courseTimetableArray[i].endTime === endTime
+          ) {
             courseTimetableArray[i].numOfStudents -= 1;
           }
         }
@@ -286,7 +294,7 @@ const CourseDisplay = ({ search }) => {
               })
 
               .map((course) => (
-                <tr>
+                <tr data-testid="course-row">
                   <td>{course[0]}</td>
                   <td>{course[2]}</td>
                   <td>{course[3] + " - " + course[4]}</td>
