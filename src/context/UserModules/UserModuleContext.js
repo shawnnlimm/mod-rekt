@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { query, collection, where, getDocs } from "firebase/firestore";
-import { fireStoreDB } from "../config/firebase";
-import { useAuth } from "./AuthContext";
+import { fireStoreDB } from "../../config/firebase";
+import { useAuth } from "../Authentication/AuthContext";
 
 const UserModulesContext = React.createContext();
 

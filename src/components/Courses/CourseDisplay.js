@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/Authentication/AuthContext";
 import {
   doc,
   getDoc,
@@ -9,7 +9,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { fireStoreDB } from "../../config/firebase";
-import { useModuleContext } from "../../context/UserModuleContext";
+import { useModuleContext } from "../../context/UserModules/UserModuleContext";
 import { toast } from "react-toastify";
 import ReactPaginate from "react-paginate";
 

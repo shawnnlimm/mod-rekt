@@ -1,8 +1,8 @@
 import React from "react";
 import { fireStoreDB, auth } from "../../config/firebase";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/Authentication/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { useModuleContext } from "../../context/UserModuleContext";
+import { useModuleContext } from "../../context/UserModules/UserModuleContext";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {

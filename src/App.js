@@ -1,23 +1,23 @@
 import "./App.css";
 import React, { useState, useEffect } from "react";
-import Signup from "./pages/Signup";
-import { AuthProvider } from "./context/AuthContext";
+import Signup from "./pages/Signup/Signup";
+import { AuthProvider } from "./context/Authentication/AuthContext";
 import { Routes, Route } from "react-router-dom";
-import Login from "./pages/Login";
+import Login from "./pages/Login/Login";
 import About from "./pages/About";
 import Home from "./pages/Home";
-import Dropdown from "./components/Dropdown";
-import PrivateRoute from "./components/PrivateRoute";
+import Dropdown from "./components/Display/Dropdown";
+import PrivateRoute from "./components/Routing/PrivateRoute";
 import Profile from "./pages/Profile";
-import Navbar from "./components/Navbar";
+import Navbar from "./components/Display/Navbar";
 import Friends from "./pages/Friends";
 import Courses from "./pages/Courses";
 import FriendProfile from "./pages/FriendProfile";
 import Default from "./pages/Default";
-import { UserModulesProvider } from "./context/UserModuleContext";
+import { UserModulesProvider } from "./context/UserModules/UserModuleContext";
 import ScrapeModules from "./ScrapeModules";
 import { ToastContainer } from "react-toastify";
-import ForgetPassword from "./pages/ForgetPassword";
+import ForgetPassword from "./pages/ForgetPassword/ForgetPassword";
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
