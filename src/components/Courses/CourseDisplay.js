@@ -292,9 +292,8 @@ const CourseDisplay = ({ search }) => {
                   ? course
                   : courseIdLower.includes(searchLower);
               })
-
               .map((course) => (
-                <tr data-testid="course-row">
+                <tr>
                   <td>{course[0]}</td>
                   <td>{course[2]}</td>
                   <td>{course[3] + " - " + course[4]}</td>
