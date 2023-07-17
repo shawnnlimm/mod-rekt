@@ -43,7 +43,7 @@ const ForgetPassword = () => {
 
   return (
     <div className="flex flex-col justify-center items-center h-screen">
-      <div className="bg-white rounded-md drop-shadow-xl p-8 max-w-mdg w-full">
+      <div className="bg-white rounded-md drop-shadow-xl p-8 max-w-md w-full">
         <h2 className="text-center mb-4 text-2xl">Forget Password</h2>
         <form onSubmit={handleForgotPassword}>
           <div className="mb-4">
