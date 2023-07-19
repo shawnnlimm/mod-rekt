@@ -89,7 +89,7 @@ describe("AddFriend component", () => {
         expect(screen.getByText("Decline")).toBeInTheDocument();
     })
 
-    it("displays filled friend requests section properly", async () => {
+    it("accept and decline friend request function is able to be called", async () => {
         const friendRequests = ["john"];
         const handleAcceptFriendRequest = jest.fn();
         const handleDeclineFriendRequest = jest.fn();
