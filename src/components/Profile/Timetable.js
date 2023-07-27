@@ -2,7 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useModuleContext } from "../../context/UserModules/UserModuleContext";
 
 const Timetable = () => {
-  const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+  const daysOfWeek = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
   const timeSlots = [
     "0800",
     "0830",

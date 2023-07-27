@@ -80,6 +80,7 @@ export function AuthProvider({ children }) {
         Wednesday: {},
         Thursday: {},
         Friday: {},
+        Saturday: {},
       },
     };
     setDoc(userDocRef, userData);
